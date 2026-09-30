@@ -25,7 +25,7 @@
   --a:#2783DE;--a2:#7CB8F5;--ag:#46A171;--ar:#E05252;
 }
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--t);font-family:'Inter',system-ui,sans-serif;font-size:16px;line-height:1.6;overflow-x:hidden;cursor:none;-webkit-font-smoothing:antialiased;}
+body{background:var(--bg);color:var(--t);font-family:'Inter',system-ui,sans-serif;font-size:16px;line-height:1.6;overflow-x:hidden;cursor:auto;-webkit-font-smoothing:antialiased;}
 ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--a);border-radius:2px}
 body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9980;opacity:.03;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");}
 
@@ -1134,33 +1134,36 @@ const qsa = (s,c=document)=>Array.from(c.querySelectorAll(s));
 const hasGSAP = typeof gsap !== 'undefined';
 if(hasGSAP && typeof ScrollTrigger !== 'undefined') gsap.registerPlugin(ScrollTrigger);
 
-/* ── CUSTOM CURSOR + MAGNETIC LABEL ─────────────────────────────────── */
+/* ── RESPONSIVE POINTER / LIGHTWEIGHT CURSOR ───────────────────────── */
 const cur=qs('#cur'), curR=qs('#cur-r'), cursorLabel=qs('#cursor-label');
-let cx=innerWidth/2,cy=innerHeight/2,rx=cx,ry=cy;
-if(!reduceMotion && matchMedia('(pointer:fine)').matches){
-  addEventListener('mousemove',e=>{
-    cx=e.clientX;cy=e.clientY;
-    document.documentElement.style.setProperty('--mx',cx+'px');
-    document.documentElement.style.setProperty('--my',cy+'px');
+let pointerX=innerWidth/2,pointerY=innerHeight/2,ringX=pointerX,ringY=pointerY,pointerFrame=0;
+const finePointer=matchMedia('(pointer:fine)').matches;
+if(!reduceMotion && finePointer){
+  addEventListener('pointermove',e=>{
+    pointerX=e.clientX; pointerY=e.clientY;
+    document.documentElement.style.setProperty('--mx',pointerX+'px');
+    document.documentElement.style.setProperty('--my',pointerY+'px');
   },{passive:true});
   (function cursorLoop(){
-    rx+=(cx-rx)*.18; ry+=(cy-ry)*.18;
-    cur.style.left=cx+'px';cur.style.top=cy+'px';
-    curR.style.left=rx+'px';curR.style.top=ry+'px';
+    ringX+=(pointerX-ringX)*.24; ringY+=(pointerY-ringY)*.24;
+    if(cur){cur.style.transform=`translate3d(${pointerX}px,${pointerY}px,0) translate(-50%,-50%)`;}
+    if(curR){curR.style.transform=`translate3d(${ringX}px,${ringY}px,0) translate(-50%,-50%)`;}
+    if(cursorLabel){cursorLabel.style.transform=`translate3d(${ringX+18}px,${ringY+18}px,0)`;}
     requestAnimationFrame(cursorLoop);
   })();
   qsa('a,button,.sv-card,.pj-card,.ab-card,.ctag').forEach(el=>{
     el.addEventListener('mouseenter',()=>{
       document.body.classList.add('hov');
       const label=el.dataset.cursor;
-      if(label){cursorLabel.textContent=label;cursorLabel.style.opacity='1';}
+      if(label&&cursorLabel){cursorLabel.textContent=label;cursorLabel.style.opacity='1';}
     });
     el.addEventListener('mouseleave',()=>{
-      document.body.classList.remove('hov');cursorLabel.style.opacity='0';
+      document.body.classList.remove('hov');
+      if(cursorLabel)cursorLabel.style.opacity='0';
     });
   });
 }else{
-  if(cur)cur.style.display='none'; if(curR)curR.style.display='none';
+  if(cur)cur.style.display='none'; if(curR)curR.style.display='none'; if(cursorLabel)cursorLabel.style.display='none';
 }
 
 /* ── LIVE SIMULATED MARKET TAPE ─────────────────────────────────────── */
@@ -1197,34 +1200,42 @@ function spawnChip(now){
 }
 (function chipLoop(ts){spawnChip(ts);requestAnimationFrame(chipLoop)})();
 
-/* ── 3D POINTER PARALLAX ────────────────────────────────────────────── */
+/* ── PERFORMANCE-SAFE HERO 3D ─────────────────────────────────────── */
 const hero=qs('#hero'),hInner=qs('.h-inner'),orbs=qsa('.depth-orb'),chart=qs('.hero-chart');
-if(!reduceMotion && matchMedia('(pointer:fine)').matches && hero && hasGSAP){
-  // Use GSAP quickTo instead of creating a new tween on every pointer event.
-  // This keeps the browser's pointer pipeline responsive even on busy hero sections.
-  const moveInner=gsap.quickTo(hInner,'x',{duration:.55,ease:'power3.out'});
-  const moveInnerY=gsap.quickTo(hInner,'y',{duration:.55,ease:'power3.out'});
-  const rotateInnerY=gsap.quickTo(hInner,'rotationY',{duration:.55,ease:'power3.out'});
-  const rotateInnerX=gsap.quickTo(hInner,'rotationX',{duration:.55,ease:'power3.out'});
-  const moveChartX=gsap.quickTo(chart,'x',{duration:.8,ease:'power2.out'});
-  const moveChartY=gsap.quickTo(chart,'y',{duration:.8,ease:'power2.out'});
-  const moveChartScale=gsap.quickTo(chart,'scale',{duration:.8,ease:'power2.out'});
-  const orbQuick=orbs.map((o,i)=>({
-    x:gsap.quickTo(o,'x',{duration:.8,ease:'power2.out'}),
-    y:gsap.quickTo(o,'y',{duration:.8,ease:'power2.out'}),
-    r:gsap.quickTo(o,'rotation',{duration:.8,ease:'power2.out'}),i
-  }));
-  hero.addEventListener('pointermove',e=>{
-    const r=hero.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
-    moveInner(x*22); moveInnerY(y*16); rotateInnerY(x*3); rotateInnerX(-y*2);
-    moveChartX(x*-18); moveChartY(y*-12); moveChartScale(1.07);
-    orbQuick.forEach(o=>{o.x(x*(o.i+1)*28);o.y(y*(o.i+1)*22);o.r(o.i*20+x*25)});
-  },{passive:true});
+if(!reduceMotion && finePointer && hero && hasGSAP){
+  const heroTarget={x:0,y:0}, heroCurrent={x:0,y:0};
+  const heroRect=()=>hero.getBoundingClientRect();
+  let rect=heroRect(), active=false, frame=0;
+  const innerX=gsap.quickSetter(hInner,'x','px'), innerY=gsap.quickSetter(hInner,'y','px');
+  const innerRY=gsap.quickSetter(hInner,'rotationY'), innerRX=gsap.quickSetter(hInner,'rotationX');
+  const chartX=gsap.quickSetter(chart,'x','px'), chartY=gsap.quickSetter(chart,'y','px');
+  const orbSetters=orbs.map(o=>({x:gsap.quickSetter(o,'x','px'),y:gsap.quickSetter(o,'y','px'),r:gsap.quickSetter(o,'rotation')}));
+  const render=()=>{
+    frame=0;
+    if(!active)return;
+    heroCurrent.x+=(heroTarget.x-heroCurrent.x)*.10;
+    heroCurrent.y+=(heroTarget.y-heroCurrent.y)*.10;
+    const x=heroCurrent.x,y=heroCurrent.y;
+    innerX(x*18); innerY(y*12); innerRY(x*2.5); innerRX(-y*1.6);
+    chartX(x*-12); chartY(y*-8);
+    orbSetters.forEach((o,i)=>{o.x(x*(i+1)*18);o.y(y*(i+1)*14);o.r(i*14+x*18);});
+    if(Math.abs(heroTarget.x-x)>.001||Math.abs(heroTarget.y-y)>.001) frame=requestAnimationFrame(render);
+  };
+  const onMove=e=>{
+    if(e.pointerType && e.pointerType!=='mouse')return;
+    if(e.clientX<rect.left||e.clientX>rect.right||e.clientY<rect.top||e.clientY>rect.bottom){active=false;return;}
+    heroTarget.x=(e.clientX-rect.left)/rect.width-.5;
+    heroTarget.y=(e.clientY-rect.top)/rect.height-.5;
+    active=true;
+    if(!frame)frame=requestAnimationFrame(render);
+  };
+  addEventListener('resize',()=>{rect=heroRect();},{passive:true});
+  addEventListener('pointermove',onMove,{passive:true});
   hero.addEventListener('pointerleave',()=>{
-    gsap.to(hInner,{duration:.8,x:0,y:0,rotationY:0,rotationX:0,ease:'power3.out',overwrite:true});
-    gsap.to(chart,{duration:.9,x:0,y:0,scale:1.06,ease:'power3.out',overwrite:true});
-    orbs.forEach(o=>gsap.to(o,{duration:.8,x:0,y:0,rotation:0,ease:'power3.out',overwrite:true}));
-  });
+    active=true; heroTarget.x=0;heroTarget.y=0;
+    if(!frame)frame=requestAnimationFrame(render);
+    setTimeout(()=>{ if(Math.abs(heroTarget.x)<.001&&Math.abs(heroTarget.y)<.001){active=false;} },700);
+  },{passive:true});
 }
 
 /* ── CARD 3D TILT ───────────────────────────────────────────────────── */
@@ -1462,29 +1473,6 @@ if(hasGSAP&&typeof ScrollTrigger!=='undefined'&&!reduceMotion){
   }
 })();
 
-/* ── WOW HERO PARALLAX ──────────────────────────────────────────────── */
-(function(){
-  const stage=document.querySelector('.hero-portrait-stage');
-  const portrait=document.querySelector('.hero-portrait');
-  if(stage && portrait && !reduceMotion && matchMedia('(pointer:fine)').matches && hasGSAP){
-    const movePX=gsap.quickTo(portrait,'x',{duration:.5,ease:'power3.out'});
-    const movePY=gsap.quickTo(portrait,'y',{duration:.5,ease:'power3.out'});
-    const rotPY=gsap.quickTo(portrait,'rotationY',{duration:.5,ease:'power3.out'});
-    const rotPX=gsap.quickTo(portrait,'rotationX',{duration:.5,ease:'power3.out'});
-    const floatCards=qsa('.float-card',stage).map(card=>({
-      el:card,x:gsap.quickTo(card,'x',{duration:.65,ease:'power2.out'}),y:gsap.quickTo(card,'y',{duration:.65,ease:'power2.out'})
-    }));
-    stage.addEventListener('pointermove',e=>{
-      const r=stage.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
-      movePX(x*18);movePY(y*10);rotPY(x*7);rotPX(-y*4);
-      floatCards.forEach((card,i)=>{card.x(x*(i%2?-18:18));card.y(y*(i%2?14:-12));});
-    },{passive:true});
-    stage.addEventListener('pointerleave',()=>{
-      gsap.to(portrait,{duration:.75,x:0,y:0,rotationY:0,rotationX:0,ease:'power3.out',overwrite:true});
-      floatCards.forEach(card=>gsap.to(card.el,{duration:.65,x:0,y:0,ease:'power3.out',overwrite:true}));
-    });
-  }
-})();
 </script>
 </body>
 </html>
