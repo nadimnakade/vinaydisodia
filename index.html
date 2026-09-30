@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Vinay Disodia — Stock Market Analyst</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07080d;--s1:#0d0f18;--s2:#131620;
+  --bdr:rgba(255,255,255,0.06);
+  --t:#edf0fa;--ts:rgba(237,240,250,0.42);
+  --a:#2783DE;--a2:#7CB8F5;--ag:#46A171;--ar:#E05252;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--t);font-family:'Inter',system-ui,sans-serif;font-size:16px;line-height:1.6;overflow-x:hidden;cursor:none;-webkit-font-smoothing:antialiased;}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--a);border-radius:2px}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9980;opacity:.03;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+/* CURSOR */
+#cur,#cur-r{position:fixed;border-radius:50%;pointer-events:none;z-index:9990;transform:translate(-50%,-50%);}
+#cur{width:10px;height:10px;background:var(--a);transition:width .25s,height .25s,background .25s}
+#cur-r{width:38px;height:38px;border:1px solid rgba(39,131,222,.45);transition:width .35s,height .35s}
+body.hov #cur{width:6px;height:6px;background:#fff}
+body.hov #cur-r{width:56px;height:56px;border-color:rgba(124,184,245,.55)}
+
+/* PRELOADER */
+#pre{position:fixed;inset:0;background:var(--bg);z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;}
+.pre-word{font-size:clamp(1.4rem,4vw,2.2rem);font-weight:900;letter-spacing:-.05em;overflow:hidden;}
+.pre-word span{display:inline-block;transform:translateY(110%)}
+.pre-bar-w{width:200px;height:1px;background:rgba(255,255,255,.07)}
+.pre-bar{height:1px;width:0;background:linear-gradient(90deg,var(--a),var(--a2))}
+.pre-pct{font-size:.68rem;color:var(--ts);letter-spacing:.12em;font-weight:600;font-family:monospace}
+
+/* HERO */
+#hero{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden;z-index:1;}
+
+/* BAKED CHART SVG */
+.hero-chart{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.9;}
+
+/* Centre gradient so text pops */
+.hero-mask{position:absolute;inset:0;pointer-events:none;
+background:radial-gradient(ellipse 56% 50% at 50% 52%,rgba(7,8,13,.82) 0%,rgba(7,8,13,.28) 58%,rgba(7,8,13,.04) 100%);}
+
+/* Side & top/bottom fade */
+.hero-mask2{position:absolute;inset:0;pointer-events:none;
+background:linear-gradient(to right,rgba(7,8,13,.55) 0%,transparent 18%,transparent 82%,rgba(7,8,13,.55) 100%);}
+
+/* FLOATING TICKER CHIPS */
+.f-tickers{position:absolute;inset:0;pointer-events:none;z-index:2;overflow:hidden;}
+.ftk{
+  position:absolute;display:inline-flex;align-items:center;gap:6px;
+  background:rgba(13,15,24,.88);backdrop-filter:blur(10px);
+  border:1px solid var(--bdr);border-radius:8px;padding:7px 13px;
+  font-size:.68rem;font-weight:700;font-family:'Inter',monospace;
+  letter-spacing:.03em;color:var(--t);white-space:nowrap;
+  animation:floatUp linear infinite;
+}
+.ftk .sym{color:var(--ts);font-weight:600;font-size:.61rem;letter-spacing:.05em;margin-right:2px}
+.ftk .up{color:var(--ag)}.ftk .dn{color:var(--ar)}
+@keyframes floatUp{0%{transform:translateY(0) translateX(0);opacity:0}6%{opacity:1}93%{opacity:1}100%{transform:translateY(-130px) translateX(var(--dx,0px));opacity:0}}
+
+/* HERO CONTENT */
+.h-inner{position:relative;z-index:3;padding:0 24px;max-width:880px}
+
+.live-bar{display:flex;align-items:center;gap:8px;justify-content:center;margin-bottom:22px;opacity:0;transform:translateY(12px);}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--ag);animation:pulse 1.9s ease-in-out infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(70,161,113,.5)}50%{box-shadow:0 0 0 8px rgba(70,161,113,0)}}
+.live-lbl{font-size:.63rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:rgba(237,240,250,.4)}
+.live-price{font-size:.82rem;font-weight:800;color:var(--ag);font-family:monospace;letter-spacing:.04em}
+.live-chg{font-size:.7rem;font-weight:800;color:var(--ag)}
+
+.h-badge{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(39,131,222,.28);background:rgba(39,131,222,.07);border-radius:100px;padding:7px 18px;font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--a2);margin-bottom:32px;opacity:0;transform:translateY(14px);}
+.h-title{font-size:clamp(3rem,9vw,7.5rem);font-weight:900;letter-spacing:-.055em;line-height:.93;margin-bottom:28px;}
+.h-line{display:block;overflow:hidden;padding-bottom:.08em}
+.h-word{display:inline-block;transform:translateY(110%);will-change:transform;}
+.h-grad{background:linear-gradient(135deg,#2783DE 0%,#7CB8F5 55%,#b8d9ff 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.h-sub{font-size:clamp(.92rem,2vw,1.1rem);color:var(--ts);max-width:460px;margin:0 auto 40px;line-height:1.75;opacity:0;transform:translateY(14px);}
+.h-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;opacity:0;transform:translateY(14px);}
+.btn-p{display:inline-flex;align-items:center;gap:10px;background:var(--a);color:#fff;text-decoration:none;padding:15px 30px;border-radius:8px;font-size:.88rem;font-weight:700;box-shadow:0 0 48px rgba(39,131,222,.22);transition:transform .2s,box-shadow .2s;}
+.btn-p:hover{transform:translateY(-2px);box-shadow:0 8px 40px rgba(39,131,222,.4)}
+.btn-g{display:inline-flex;align-items:center;gap:10px;background:transparent;color:var(--t);text-decoration:none;padding:15px 30px;border-radius:8px;font-size:.88rem;font-weight:600;border:1px solid var(--bdr);transition:border-color .25s,background .25s;}
+.btn-g:hover{border-color:rgba(255,255,255,.2);background:rgba(255,255,255,.04)}
+.h-disc{margin-top:22px;font-size:.64rem;color:var(--ts);opacity:.5;letter-spacing:.02em}
+
+/* PULSING PRICE LINE (CSS animation on the SVG .cprice-line) */
+@keyframes priceBlink{0%,100%{opacity:.6}50%{opacity:1}}
+.cprice-line{animation:priceBlink 2s ease-in-out infinite}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 56px;height:62px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid transparent;opacity:0;transform:translateY(-12px);transition:backdrop-filter .4s,background .4s,border-color .4s;}
+nav.scrolled{backdrop-filter:blur(16px);background:rgba(7,8,13,.9);border-color:var(--bdr);}
+.n-logo{font-size:.95rem;font-weight:800;letter-spacing:-.04em;color:var(--t);text-decoration:none}
+.n-links{display:flex;gap:32px;list-style:none}
+.n-links a{color:var(--ts);text-decoration:none;font-size:.78rem;font-weight:500;letter-spacing:.05em;text-transform:uppercase;position:relative;transition:color .25s;}
+.n-links a::after{content:'';position:absolute;bottom:-3px;left:0;width:0;height:1px;background:var(--a);transition:width .3s;}
+.n-links a:hover{color:var(--t)}.n-links a:hover::after{width:100%}
+.n-cta{background:var(--a)!important;color:#fff!important;padding:9px 20px;border-radius:7px;transition:transform .2s,box-shadow .2s!important;}
+.n-cta:hover{transform:translateY(-1px)!important;box-shadow:0 4px 20px rgba(39,131,222,.35)!important}
+.n-cta::after{display:none!important}
+
+/* TICKER BAND */
+.ticker{border-top:1px solid var(--bdr);border-bottom:1px solid var(--bdr);overflow:hidden;padding:14px 0;background:rgba(255,255,255,.016);position:relative;z-index:1;}
+.tick-track{display:flex;gap:0;white-space:nowrap;animation:ticker 26s linear infinite;}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.tick-item{display:inline-flex;align-items:center;gap:10px;padding:0 24px;font-size:.7rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--ts);flex-shrink:0;}
+.tick-dot{color:var(--a);font-size:.9rem}
+
+/* SECTIONS */
+section{padding:110px 56px;position:relative;z-index:1}
+.ctr{max-width:960px;margin:0 auto}
+.s-lbl{font-size:.66rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--a);margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+.s-lbl::before{content:'';width:20px;height:1px;background:var(--a)}
+.s-ttl{font-size:clamp(1.9rem,4vw,2.9rem);font-weight:800;letter-spacing:-.04em;line-height:1.1;margin-bottom:18px;}
+.s-sub{color:var(--ts);font-size:.95rem;max-width:460px;line-height:1.8;margin-bottom:60px;}
+.rv{will-change:transform,opacity}
+
+/* ABOUT */
+#about{background:var(--s1)}
+.ab-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:80px;align-items:center;}
+.ab-text p{color:var(--ts);line-height:1.9;margin-bottom:18px;font-size:.94rem}
+.stats{display:flex;gap:36px;margin-top:36px}
+.st-n{font-size:2.6rem;font-weight:900;letter-spacing:-.055em;background:linear-gradient(135deg,var(--a),var(--a2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.st-l{font-size:.72rem;color:var(--ts);font-weight:600;letter-spacing:.03em;margin-top:2px}
+.ab-card{background:var(--s2);border:1px solid var(--bdr);border-radius:20px;padding:32px;position:relative;overflow:hidden;cursor:none;transform-style:preserve-3d;}
+.ab-card::before{content:'';position:absolute;top:-80px;right:-80px;width:220px;height:220px;background:radial-gradient(circle,rgba(39,131,222,.12) 0%,transparent 70%);pointer-events:none;}
+.chart-svg{width:100%;margin-bottom:20px;display:block}
+.c-tags{display:flex;flex-wrap:wrap;gap:7px}
+.ctag{background:rgba(39,131,222,.09);border:1px solid rgba(39,131,222,.2);color:var(--a2);font-size:.66rem;font-weight:700;padding:5px 12px;border-radius:100px;letter-spacing:.04em;}
+
+/* SERVICES */
+#services{background:var(--bg)}
+.sv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.sv-card{background:var(--s1);border:1px solid var(--bdr);border-radius:16px;padding:34px 26px;position:relative;overflow:hidden;cursor:none;transition:border-color .3s;}
+.sv-card::after{content:'';position:absolute;inset:0;border-radius:16px;background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(39,131,222,.07) 0%,transparent 55%);opacity:0;transition:opacity .3s;pointer-events:none;}
+.sv-card:hover::after{opacity:1}
+.sv-card:hover{border-color:rgba(39,131,222,.32)}
+.sv-n{font-size:.62rem;font-weight:800;letter-spacing:.12em;color:var(--ts);text-transform:uppercase;margin-bottom:22px}
+.sv-ico{font-size:1.9rem;margin-bottom:18px;display:block}
+.sv-card h3{font-size:1rem;font-weight:700;letter-spacing:-.02em;margin-bottom:10px}
+.sv-card p{color:var(--ts);font-size:.84rem;line-height:1.7}
+
+/* PROJECTS */
+#projects{background:var(--s1)}
+.pj-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.pj-card{background:var(--bg);border:1px solid var(--bdr);border-radius:16px;padding:30px;display:flex;flex-direction:column;gap:13px;cursor:none;position:relative;overflow:hidden;transition:border-color .3s,transform .35s ease;}
+.pj-card::before{content:'';position:absolute;inset:0;border-radius:16px;background:linear-gradient(135deg,rgba(39,131,222,.05) 0%,transparent 60%);opacity:0;transition:opacity .3s;pointer-events:none;}
+.pj-card:hover::before{opacity:1}
+.pj-card:hover{border-color:rgba(39,131,222,.28);transform:translateY(-3px)}
+.pj-tag{display:inline-block;background:rgba(70,161,113,.11);border:1px solid rgba(70,161,113,.22);color:var(--ag);font-size:.63rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:4px 11px;border-radius:100px;width:fit-content;}
+.pj-card h3{font-size:1rem;font-weight:700;letter-spacing:-.02em}
+.pj-card p{color:var(--ts);font-size:.84rem;line-height:1.65;flex:1}
+.pj-lnk{color:var(--a);text-decoration:none;font-size:.78rem;font-weight:700;display:inline-flex;align-items:center;gap:5px;width:fit-content;}
+.pj-lnk .arr{display:inline-block;transition:transform .2s}
+.pj-lnk:hover .arr{transform:translateX(4px)}
+.pj-feat{grid-column:1/-1;flex-direction:row;align-items:center;gap:36px;}
+.pj-feat .pj-vis{width:160px;flex-shrink:0;height:110px;background:linear-gradient(135deg,rgba(39,131,222,.14),rgba(124,184,245,.04));border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:2.8rem;}
+.pj-feat .pj-body{flex:1}
+
+/* CONTACT */
+#contact{background:var(--bg)}
+.ct-inner{max-width:640px;margin:0 auto;text-align:center}
+.ct-inner .s-sub{margin:0 auto 44px;max-width:400px}
+.s-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:32px}
+.s-btn{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;border-radius:10px;font-size:.86rem;font-weight:700;text-decoration:none;cursor:none;transition:transform .2s,box-shadow .2s;}
+.s-btn:hover{transform:translateY(-2px)}
+.s-btn.thr{background:var(--t);color:var(--bg);box-shadow:0 4px 24px rgba(237,240,250,.1)}
+.s-btn.thr:hover{box-shadow:0 8px 32px rgba(237,240,250,.2)}
+.disc-box{background:rgba(213,128,59,.07);border:1px solid rgba(213,128,59,.22);border-radius:10px;padding:16px 22px;font-size:.72rem;color:rgba(213,128,59,.85);line-height:1.65;max-width:460px;margin:0 auto;}
+
+footer{border-top:1px solid var(--bdr);padding:26px 56px;display:flex;justify-content:space-between;align-items:center;font-size:.72rem;color:var(--ts);position:relative;z-index:1;}
+
+@media(max-width:768px){
+nav{padding:0 20px}.n-links{display:none}
+section{padding:80px 20px}
+.ab-grid{grid-template-columns:1fr;gap:40px}
+.sv-grid{grid-template-columns:1fr}
+.pj-grid{grid-template-columns:1fr}
+.pj-feat{flex-direction:column}
+.pj-feat .pj-vis{width:100%;height:90px}
+footer{flex-direction:column;gap:8px;text-align:center;padding:22px 20px}
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   CINEMATIC 3D / GSAP ENHANCEMENT
+   ═══════════════════════════════════════════════════════════════════════════ */
+:root{
+  --mx:50%;
+  --my:50%;
+  --depth:0px;
+}
+body{cursor:none}
+body::after{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:9979;
+  background:radial-gradient(500px circle at var(--mx) var(--my),rgba(39,131,222,.07),transparent 62%);
+  mix-blend-mode:screen;
+}
+#hero{perspective:1400px;isolation:isolate}
+#hero::before{
+  content:"";position:absolute;inset:-20%;z-index:-1;
+  background:
+    radial-gradient(circle at 50% 52%,rgba(39,131,222,.11),transparent 28%),
+    radial-gradient(circle at 15% 30%,rgba(124,184,245,.055),transparent 25%),
+    radial-gradient(circle at 85% 70%,rgba(70,161,113,.045),transparent 24%);
+  transform:translate3d(0,var(--hero-y,0px),0) scale(1.05);
+  will-change:transform;
+}
+.hero-chart{
+  transform:translate3d(0,0,-80px) scale(1.06);
+  transform-origin:center;
+  filter:saturate(.8) contrast(1.05);
+  will-change:transform;
+}
+.hero-mask,.hero-mask2{z-index:1}
+.f-tickers{z-index:2}
+.h-inner{transform-style:preserve-3d;will-change:transform}
+.h-inner::before{
+  content:"";position:absolute;inset:-80px -100px;z-index:-1;
+  background:radial-gradient(ellipse,rgba(7,8,13,.64),transparent 68%);
+  transform:translateZ(-80px);
+  filter:blur(4px);
+}
+.h-title{text-shadow:0 20px 70px rgba(0,0,0,.32)}
+.h-word{will-change:transform}
+.btn-p,.btn-g,.s-btn,.n-cta{position:relative;overflow:hidden}
+.btn-p::before,.s-btn.thr::before,.n-cta::before{
+  content:"";position:absolute;inset:-2px;
+  background:linear-gradient(110deg,transparent 25%,rgba(255,255,255,.32) 48%,transparent 68%);
+  transform:translateX(-130%);transition:transform .7s ease;pointer-events:none;
+}
+.btn-p:hover::before,.s-btn.thr:hover::before,.n-cta:hover::before{transform:translateX(130%)}
+.btn-p span,.btn-g span,.s-btn span{position:relative}
+section{overflow:hidden}
+section::before{
+  content:"";position:absolute;left:0;top:0;width:100%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(39,131,222,.2),transparent);
+  transform:scaleX(0);transform-origin:center;
+}
+section.in-view::before{animation:sectionLine 1.2s ease forwards}
+@keyframes sectionLine{to{transform:scaleX(1)}}
+
+/* floating 3D objects */
+.depth-scene{position:absolute;inset:0;pointer-events:none;z-index:2;overflow:hidden}
+.depth-orb{
+  position:absolute;width:clamp(70px,8vw,130px);aspect-ratio:1;border-radius:50%;
+  border:1px solid rgba(124,184,245,.18);
+  background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.13),rgba(39,131,222,.08) 25%,transparent 67%);
+  box-shadow:inset -20px -20px 55px rgba(0,0,0,.5),0 0 80px rgba(39,131,222,.08);
+  filter:blur(.1px);
+  transform-style:preserve-3d;
+}
+.depth-orb::after{
+  content:"";position:absolute;inset:15%;border-radius:50%;
+  border:1px solid rgba(255,255,255,.07);transform:rotate(35deg) scaleY(.35);
+}
+.orb-a{left:8%;top:20%}.orb-b{right:9%;top:27%;width:clamp(50px,5vw,90px)}.orb-c{right:17%;bottom:17%;width:clamp(35px,3vw,60px)}
+.hero-scroll{
+  position:absolute;left:50%;bottom:22px;transform:translateX(-50%);
+  z-index:4;color:rgba(237,240,250,.38);font-size:.58rem;letter-spacing:.2em;
+  text-transform:uppercase;display:flex;flex-direction:column;align-items:center;gap:9px;
+}
+.hero-scroll i{display:block;width:1px;height:38px;background:linear-gradient(var(--a),transparent);animation:scrollLine 1.8s ease-in-out infinite}
+@keyframes scrollLine{0%,100%{opacity:.3;transform:scaleY(.6);transform-origin:top}50%{opacity:1;transform:scaleY(1);transform-origin:top}}
+
+/* cards become physically responsive */
+.sv-card,.pj-card,.ab-card{
+  transform-style:preserve-3d;
+  will-change:transform;
+}
+.sv-card::before,.pj-card::after{
+  content:"";position:absolute;inset:1px;border-radius:inherit;pointer-events:none;
+  background:linear-gradient(135deg,rgba(255,255,255,.06),transparent 30%);
+  opacity:.55;
+}
+.sv-ico,.sv-n,.sv-card h3,.sv-card p,.pj-tag,.pj-card h3,.pj-card p,.pj-lnk,.pj-vis,.ab-card > *{
+  transform:translateZ(18px);
+}
+.pj-vis{transform:translateZ(26px)!important}
+.pj-card:hover{transform:translateY(-7px)}
+.pj-card.pj-feat:hover{transform:translateY(-7px)}
+.ctag{transition:transform .25s ease,background .25s ease}
+.ctag:hover{transform:translateY(-3px) scale(1.04);background:rgba(39,131,222,.15)}
+
+/* magnetic cursor label */
+#cursor-label{
+  position:fixed;z-index:9991;pointer-events:none;opacity:0;
+  padding:6px 9px;border-radius:5px;background:rgba(7,8,13,.86);
+  border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(8px);
+  color:rgba(237,240,250,.72);font-size:9px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;transform:translate(18px,18px);white-space:nowrap;
+}
+
+/* section accent numbers */
+.s-lbl{position:relative}
+.s-lbl::after{
+  content:"";width:4px;height:4px;border-radius:50%;background:var(--a);
+  box-shadow:0 0 12px var(--a);animation:pulse 2s infinite;
+}
+
+/* mobile */
+@media(max-width:768px){
+  body{cursor:auto}
+  #cur,#cur-r,#cursor-label{display:none}
+  .hero-chart{transform:translate3d(0,0,-40px) scale(1.28);opacity:.65}
+  .depth-orb{opacity:.5}
+  .orb-a{left:-5%;top:16%}.orb-b{right:-4%;top:24%}.orb-c{right:7%;bottom:10%}
+  .hero-scroll{bottom:14px}
+  .h-inner::before{inset:-30px -30px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+
+</style>
+
+<style>
+.n-links a.active{color:var(--t)}
+.n-links a.active::after{width:100%}
+body.grid-mode #hero::before{background:
+ radial-gradient(circle at 50% 52%,rgba(39,131,222,.16),transparent 28%),
+ repeating-linear-gradient(0deg,transparent 0 49px,rgba(39,131,222,.025) 50px),
+ repeating-linear-gradient(90deg,transparent 0 49px,rgba(39,131,222,.025) 50px)}
+</style>
+</head>
+<body>
+<div id="cur"></div><div id="cur-r"></div><div id="cursor-label"></div>
+
+<!-- PRELOADER -->
+<div id="pre">
+  <div class="pre-word"><span id="pw">VINAY DISODIA</span></div>
+  <div class="pre-bar-w"><div class="pre-bar" id="pb"></div></div>
+  <div class="pre-pct" id="pp">0%</div>
+</div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#" class="n-logo">VD ✦</a>
+  <ul class="n-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#services">What I Do</a></li>
+    <li><a href="#projects">Analysis</a></li>
+    <li><a href="#contact" class="n-cta">Follow Me</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+
+  <!-- BAKED STATIC CHART (always visible, no JS needed) -->
+  <svg class="hero-chart" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <line x1="15.2" y1="44" x2="15.2" y2="756" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
+    <line x1="227.5" y1="44" x2="227.5" y2="756" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
+    <line x1="439.8" y1="44" x2="439.8" y2="756" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
+    <line x1="652.2" y1="44" x2="652.2" y2="756" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
+    <line x1="864.5" y1="44" x2="864.5" y2="756" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
+    <line x1="1076.8" y1="44" x2="1076.8" y2="756" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
+    <line x1="1289.2" y1="44" x2="1289.2" y2="756" stroke="rgba(255,255,255,0.04)" stroke-width="0.5"/>
+    <line x1="0" y1="756.0" x2="1365" y2="756.0" stroke="rgba(255,255,255,0.06)" stroke-width="0.5" stroke-dasharray="2,5"/>
+    <text x="1370" y="759.5" fill="rgba(237,240,250,0.3)" font-size="10" font-family="monospace">23,943.50</text>
+    <line x1="0" y1="637.3" x2="1365" y2="637.3" stroke="rgba(255,255,255,0.06)" stroke-width="0.5" stroke-dasharray="2,5"/>
+    <text x="1370" y="640.8" fill="rgba(237,240,250,0.3)" font-size="10" font-family="monospace">24,103.25</text>
+    <line x1="0" y1="518.7" x2="1365" y2="518.7" stroke="rgba(255,255,255,0.06)" stroke-width="0.5" stroke-dasharray="2,5"/>
+    <text x="1370" y="522.2" fill="rgba(237,240,250,0.3)" font-size="10" font-family="monospace">24,262.99</text>
+    <line x1="0" y1="400.0" x2="1365" y2="400.0" stroke="rgba(255,255,255,0.06)" stroke-width="0.5" stroke-dasharray="2,5"/>
+    <text x="1370" y="403.5" fill="rgba(237,240,250,0.3)" font-size="10" font-family="monospace">24,422.74</text>
+    <line x1="0" y1="281.3" x2="1365" y2="281.3" stroke="rgba(255,255,255,0.06)" stroke-width="0.5" stroke-dasharray="2,5"/>
+    <text x="1370" y="284.8" fill="rgba(237,240,250,0.3)" font-size="10" font-family="monospace">24,582.49</text>
+    <line x1="0" y1="162.7" x2="1365" y2="162.7" stroke="rgba(255,255,255,0.06)" stroke-width="0.5" stroke-dasharray="2,5"/>
+    <text x="1370" y="166.2" fill="rgba(237,240,250,0.3)" font-size="10" font-family="monospace">24,742.24</text>
+    <line x1="0" y1="44.0" x2="1365" y2="44.0" stroke="rgba(255,255,255,0.06)" stroke-width="0.5" stroke-dasharray="2,5"/>
+    <text x="1370" y="47.5" fill="rgba(237,240,250,0.3)" font-size="10" font-family="monospace">24,901.99</text>
+    <rect x="7.0" y="812.3" width="16.4" height="59.7" fill="#46A171" opacity="0.22"/>
+    <rect x="37.3" y="828.8" width="16.4" height="43.2" fill="#E05252" opacity="0.22"/>
+    <rect x="67.6" y="830.5" width="16.4" height="41.5" fill="#46A171" opacity="0.22"/>
+    <rect x="98.0" y="824.9" width="16.4" height="47.1" fill="#E05252" opacity="0.22"/>
+    <rect x="128.3" y="783.4" width="16.4" height="88.6" fill="#E05252" opacity="0.22"/>
+    <rect x="158.6" y="824.7" width="16.4" height="47.3" fill="#46A171" opacity="0.22"/>
+    <rect x="189.0" y="814.0" width="16.4" height="58.0" fill="#46A171" opacity="0.22"/>
+    <rect x="219.3" y="789.6" width="16.4" height="82.4" fill="#46A171" opacity="0.22"/>
+    <rect x="249.6" y="801.4" width="16.4" height="70.6" fill="#46A171" opacity="0.22"/>
+    <rect x="280.0" y="769.0" width="16.4" height="103.0" fill="#E05252" opacity="0.22"/>
+    <rect x="310.3" y="805.4" width="16.4" height="66.6" fill="#46A171" opacity="0.22"/>
+    <rect x="340.6" y="810.8" width="16.4" height="61.2" fill="#46A171" opacity="0.22"/>
+    <rect x="371.0" y="795.3" width="16.4" height="76.7" fill="#46A171" opacity="0.22"/>
+    <rect x="401.3" y="827.4" width="16.4" height="44.6" fill="#46A171" opacity="0.22"/>
+    <rect x="431.6" y="771.9" width="16.4" height="100.1" fill="#E05252" opacity="0.22"/>
+    <rect x="462.0" y="814.7" width="16.4" height="57.3" fill="#E05252" opacity="0.22"/>
+    <rect x="492.3" y="813.6" width="16.4" height="58.4" fill="#46A171" opacity="0.22"/>
+    <rect x="522.6" y="789.7" width="16.4" height="82.3" fill="#E05252" opacity="0.22"/>
+    <rect x="553.0" y="832.7" width="16.4" height="39.3" fill="#46A171" opacity="0.22"/>
+    <rect x="583.3" y="791.5" width="16.4" height="80.5" fill="#46A171" opacity="0.22"/>
+    <rect x="613.6" y="776.2" width="16.4" height="95.8" fill="#46A171" opacity="0.22"/>
+    <rect x="644.0" y="817.6" width="16.4" height="54.4" fill="#46A171" opacity="0.22"/>
+    <rect x="674.3" y="768.3" width="16.4" height="103.7" fill="#E05252" opacity="0.22"/>
+    <rect x="704.6" y="802.2" width="16.4" height="69.8" fill="#E05252" opacity="0.22"/>
+    <rect x="735.0" y="782.3" width="16.4" height="89.7" fill="#46A171" opacity="0.22"/>
+    <rect x="765.3" y="807.0" width="16.4" height="65.0" fill="#E05252" opacity="0.22"/>
+    <rect x="795.6" y="812.4" width="16.4" height="59.6" fill="#E05252" opacity="0.22"/>
+    <rect x="826.0" y="823.2" width="16.4" height="48.8" fill="#E05252" opacity="0.22"/>
+    <rect x="856.3" y="844.4" width="16.4" height="27.6" fill="#E05252" opacity="0.22"/>
+    <rect x="886.6" y="828.5" width="16.4" height="43.5" fill="#46A171" opacity="0.22"/>
+    <rect x="917.0" y="764.8" width="16.4" height="107.2" fill="#E05252" opacity="0.22"/>
+    <rect x="947.3" y="801.7" width="16.4" height="70.3" fill="#E05252" opacity="0.22"/>
+    <rect x="977.6" y="807.6" width="16.4" height="64.4" fill="#46A171" opacity="0.22"/>
+    <rect x="1008.0" y="772.1" width="16.4" height="99.9" fill="#46A171" opacity="0.22"/>
+    <rect x="1038.3" y="796.0" width="16.4" height="76.0" fill="#46A171" opacity="0.22"/>
+    <rect x="1068.6" y="765.9" width="16.4" height="106.1" fill="#46A171" opacity="0.22"/>
+    <rect x="1099.0" y="816.0" width="16.4" height="56.0" fill="#E05252" opacity="0.22"/>
+    <rect x="1129.3" y="827.5" width="16.4" height="44.5" fill="#E05252" opacity="0.22"/>
+    <rect x="1159.6" y="770.4" width="16.4" height="101.6" fill="#46A171" opacity="0.22"/>
+    <rect x="1190.0" y="832.0" width="16.4" height="40.0" fill="#46A171" opacity="0.22"/>
+    <rect x="1220.3" y="780.9" width="16.4" height="91.1" fill="#46A171" opacity="0.22"/>
+    <rect x="1250.6" y="796.8" width="16.4" height="75.2" fill="#46A171" opacity="0.22"/>
+    <rect x="1281.0" y="765.4" width="16.4" height="106.6" fill="#E05252" opacity="0.22"/>
+    <rect x="1311.3" y="768.5" width="16.4" height="103.5" fill="#46A171" opacity="0.22"/>
+    <line x1="15.2" y1="539.2" x2="15.2" y2="580.3" stroke="#46A171" stroke-width="0.9"/>
+    <rect x="6.7" y="541.0" width="17.0" height="24.5" fill="#46A171" opacity="0.3" stroke="#46A171" stroke-width="0.9"/>
+    <line x1="45.5" y1="487.9" x2="45.5" y2="620.4" stroke="#E05252" stroke-width="0.9"/>
+    <rect x="37.0" y="541.0" width="17.0" height="42.9" fill="#E05252" opacity="0.72"/>
+    <line x1="75.8" y1="512.3" x2="75.8" y2="606.6" stroke="#46A171" stroke-width="0.9"/>
+    <rect x="67.3" y="518.6" width="17.0" height="65.3" fill="#46A171" opacity="0.3" stroke="#46A171" stroke-width="0.9"/>
+    <line x1="106.2" y1="502.8" x2="106.2" y2="620.3" stroke="#E05252" stroke-width="0.9"/>
+    <rect x="97.7" y="518.6" width="17.0" height="74.3" fill="#E05252" opacity="0.72"/>
+    <line x1="136.5" y1="578.6" x2="136.5" y2="702.5" stroke="#E05252" stroke-width="0.9"/>
+    <rect x="128.0" y="592.9" width="17.0" height="74.6" fill="#E05252" opacity="0.72"/>
+    <line x1="166.8" y1="642.6" x2="166.8" y2="699.1" stroke="#46A171" stroke-width="0.9"/>
+    <rect x="158.3" y="658.3" width="17.0" height="9.1" fill="#46A171" opacity="0.3" stroke="#46A171" stroke-width="0.9"/>
+    <line x1="197.2" y1="606.2" x2="197.2" y2="701.6" stroke="#46A171" stroke-width="0.9"/>
+    <rect x="188.7" y="606.6" width="17.0" height="51.7" fill="#46A171" opacity="0.3" stroke="#46A171" stroke-width="0.9"/>
+    <line x1="227.5" y1="548.3" x2="227.5" y2="615.0" stroke="#46A171" stroke-width="0.9"/>
+    <rect x="219.0" y="572.7" width="17.0" height="33.9" fill="#46A171" opacity="0.3" stroke="#46A171" stroke-width="0.9"/>
+    <line x1="257.8" y1="472.7" x2="257.8" y2="577.7" stroke="#46A171" stroke-width="0.9"/>
+    <rect x="249.3" y="496.9" width="17.0" height="75.9" fill="#46A171" opacity="0.3" stroke="#46A171" stroke-width="0.9"/>
+    <line x1="288.2" y1="435.7" x2="288.2" y2="593.1" stroke="#E05252" stroke-width="0.9"/>
+    <rect x="279.7" y="496.9" width="17.0" height="63.6" fill="#E05252" opacity="0.72"/>
+    <line x1="318.5" y1="456.3" x2="318.5" y2="589.3" stroke="#46A171" stroke-width="0.9"/>
+    <rect x="310.0" y="508.8" width="17.0" height="51.6" fill="#46A171" opacity="0.3" stroke="#46A171" stroke-width="0.9"/>
+    <line x1="348.8" y1="402.8" x2="348.8" y2="538.7" stroke="#46A171" stroke-width="0.9"/>
+    <rect x="340.3" y="430.1" width="17.0" height="78.7" fill="#46A171" opacity="0.3" stroke="#46A171" stroke-width="0.9"/>
+    <line x1="379.2" y1="329.6" x2="379.2" y2="476.9" stroke="#46A171" stroke-width="0.9"/>
+    <rect x="370.7" y="374.4" width="17.0" height="55.6" fill="#46A171" opacity="0.3" stroke="#46A171" stroke-width="0.9"/>
+    <line x1="409.5" y1="308.6" x2="409.5" y2="376.9" stroke="#46A171" stroke-width="0.9"/>
+    <rect x="401.0" y="359.8" width="17.0" height="14.6" fill="#46A171" opacity="0.3" stroke="#46A171" stroke-width="0.9"/>
+    <line x1="439.8" y1="338.8" x2="439.8" y2="406.8" stroke="#E05252" stroke-width="0.9"/>
+    <rect x="431.3" y="359.8" width="17.0" height="42.6" fill="#E05252" opacity="0.72"/>
+    <line x1="470.2" y1="395.1" x2="470.2" y2="459.2" stroke="#E05252" stroke-width="0.9"/>
+    <rect x="461.7" y="402.4" width="17.0" height="41.7" fill="#E05252" opacity="0.72"/>
+    <line x1="500.5" y1="393.7" x2="500.5" y2="464.2" stroke="#46A171" stroke-width="0.9"/>
+    <rect x="492.0" y="420.1" width="17.0" height="24.0" fill="#46A171" opacity="0.3" stroke="#46A171" stroke-width="0.9"/>
+    <line x1="530.8" y1="400.7" x2="530.8" y2="516.4" stroke="#E05252" stroke-width="0.9"/>
+    <rect x="522.3" y="420.1" width="17.0" height="45.4" fill="#E05252" opacity="0.72"/>
+    <line x1="561.2" y1="395.4" x2="561.2" y2="474.8" stroke="#46A171" stroke-width="0.9"/>
+    <rect x="552.7" y="439.5" width="17.0" height="26.0" fill="#46A171" opacity="0.3" stroke="#46A171" stroke-width="0.9"/>
+    <line x1="591.5" y1="388.4" x2="591.5" y2="460.1" stroke="#46A171" stroke-width="0.9"/>
+    <rect x="583.0" y="400.2" width="17.0" height="39.3" fill="#46A171" opacity="0.3" stroke="#46A171" stroke-width="0.9"/>
+    <line x1="621.8" y1="271.9" x2="621.8" y2="430.5" stroke="#46A171" stroke-width="0.9"/>
+    <rect x="613.3" y="318.3" width="17.0" height="81.9" fill="#46A171" opacity="0.3" stroke="#46A171" stroke-width="0.9"/>
+    <line x1="652.2" y1="224.7" x2="652.2" y2="360.8" stroke="#46A171" stroke-width="0.9"/>
+    <rect x="643.7" y="286.1" width="17.0" height="32.2" fill="#46A171" opacity="0.3" stroke="#46A171" stroke-width="0.9"/>
+    <line x1="682.5" y1="283.8" x2="682.5" y2="346.0" stroke="#E05252" stroke-width="0.9"/>
+    <rect x="674.0" y="286.1" width="17.0" height="42.6" fill="#E05252" opacity="0.72"/>
+    <line x1="712.8" y1="313.3" x2="712.8" y2="416.2" stroke="#E05252" stroke-width="0.9"/>
+    <rect x="704.3" y="328.7" width="17.0" height="36.0" fill="#E05252" opacity="0.72"/>
+    <line x1="743.2" y1="278.2" x2="743.2" y2="400.5" stroke="#46A171" stroke-width="0.9"/>
+    <rect x="734.7" y="301.1" width="17.0" height="63.6" fill="#46A171" opacity="0.3" stroke="#46A171" stroke-width="0.9"/>
+    <line x1="773.5" y1="234.4" x2="773.5" y2="341.3" stroke="#E05252" stroke-width="0.9"/>
+    <rect x="765.0" y="301.1" width="17.0" height="15.1" fill="#E05252" opacity="0.72"/>
+    <line x1="803.8" y1="298.3" x2="803.8" y2="383.5" stroke="#E05252" stroke-width="0.9"/>
+    <rect x="795.3" y="316.2" width="17.0" height="36.5" fill="#E05252" opacity="0.72"/>
+    <line x1="834.2" y1="310.2" x2="834.2" y2="438.6" stroke="#E05252" stroke-width="0.9"/>
+    <rect x="825.7" y="352.8" width="17.0" height="36.8" fill="#E05252" opacity="0.72"/>
+    <line x1="864.5" y1="373.7" x2="864.5" y2="458.3" stroke="#E05252" stroke-width="0.9"/>
+    <rect x="856.0" y="389.6" width="17.0" height="14.4" fill="#E05252" opacity="0.72"/>
+    <line x1="894.8" y1="393.8" x2="894.8" y2="406.6" stroke="#46A171" stroke-width="0.9"/>
+    <rect x="886.3" y="400.4" width="17.0" height="3.6" fill="#46A171" opacity="0.3" stroke="#46A171" stroke-width="0.9"/>
+    <line x1="925.2" y1="354.9" x2="925.2" y2="505.3" stroke="#E05252" stroke-width="0.9"/>
+    <rect x="916.7" y="400.4" width="17.0" height="61.7" fill="#E05252" opacity="0.72"/>
+    <line x1="955.5" y1="457.6" x2="955.5" y2="493.5" stroke="#E05252" stroke-width="0.9"/>
+    <rect x="947.0" y="462.2" width="17.0" height="10.7" fill="#E05252" opacity="0.72"/>
+    <line x1="985.8" y1="351.9" x2="985.8" y2="525.5" stroke="#46A171" stroke-width="0.9"/>
+    <rect x="977.3" y="390.1" width="17.0" height="82.7" fill="#46A171" opacity="0.3" stroke="#46A171" stroke-width="0.9"/>
+    <line x1="1016.2" y1="328.3" x2="1016.2" y2="429.4" stroke="#46A171" stroke-width="0.9"/>
+    <rect x="1007.7" y="329.2" width="17.0" height="61.0" fill="#46A171" opacity="0.3" stroke="#46A171" stroke-width="0.9"/>
+    <line x1="1046.5" y1="258.2" x2="1046.5" y2="343.7" stroke="#46A171" stroke-width="0.9"/>
+    <rect x="1038.0" y="297.4" width="17.0" height="31.8" fill="#46A171" opacity="0.3" stroke="#46A171" stroke-width="0.9"/>
+    <line x1="1076.8" y1="264.0" x2="1076.8" y2="321.2" stroke="#46A171" stroke-width="0.9"/>
+    <rect x="1068.3" y="272.2" width="17.0" height="25.2" fill="#46A171" opacity="0.3" stroke="#46A171" stroke-width="0.9"/>
+    <line x1="1107.2" y1="202.5" x2="1107.2" y2="325.8" stroke="#E05252" stroke-width="0.9"/>
+    <rect x="1098.7" y="272.2" width="17.0" height="5.6" fill="#E05252" opacity="0.72"/>
+    <line x1="1137.5" y1="241.2" x2="1137.5" y2="324.4" stroke="#E05252" stroke-width="0.9"/>
+    <rect x="1129.0" y="277.8" width="17.0" height="36.9" fill="#E05252" opacity="0.72"/>
+    <line x1="1167.8" y1="181.4" x2="1167.8" y2="330.9" stroke="#46A171" stroke-width="0.9"/>
+    <rect x="1159.3" y="244.9" width="17.0" height="69.7" fill="#46A171" opacity="0.3" stroke="#46A171" stroke-width="0.9"/>
+    <line x1="1198.2" y1="175.4" x2="1198.2" y2="253.3" stroke="#46A171" stroke-width="0.9"/>
+    <rect x="1189.7" y="220.0" width="17.0" height="24.9" fill="#46A171" opacity="0.3" stroke="#46A171" stroke-width="0.9"/>
+    <line x1="1228.5" y1="135.1" x2="1228.5" y2="262.8" stroke="#46A171" stroke-width="0.9"/>
+    <rect x="1220.0" y="174.7" width="17.0" height="45.3" fill="#46A171" opacity="0.3" stroke="#46A171" stroke-width="0.9"/>
+    <line x1="1258.8" y1="167.6" x2="1258.8" y2="192.5" stroke="#46A171" stroke-width="0.9"/>
+    <rect x="1250.3" y="167.6" width="17.0" height="7.1" fill="#46A171" opacity="0.3" stroke="#46A171" stroke-width="0.9"/>
+    <line x1="1289.2" y1="99.3" x2="1289.2" y2="293.5" stroke="#E05252" stroke-width="0.9"/>
+    <rect x="1280.7" y="167.6" width="17.0" height="77.4" fill="#E05252" opacity="0.72"/>
+    <line x1="1319.5" y1="165.9" x2="1319.5" y2="248.2" stroke="#46A171" stroke-width="0.9"/>
+    <rect x="1311.0" y="188.4" width="17.0" height="56.6" fill="#46A171" opacity="0.3" stroke="#46A171" stroke-width="0.9"/>
+    <polyline points="288.2,579.9 318.5,576.7 348.8,561.3 379.2,546.9 409.5,523.6 439.8,497.1 470.2,475.6 500.5,457.0 530.8,446.2 561.2,440.5 591.5,424.5 621.8,405.4 652.2,391.1 682.5,386.5 712.8,387.0 743.2,376.8 773.5,364.0 803.8,357.3 834.2,349.7 864.5,346.2 894.8,346.2 925.2,360.6 955.5,379.3 985.8,385.4 1016.2,381.8 1046.5,381.5 1076.8,377.1 1107.2,369.6 1137.5,362.1 1167.8,346.2 1198.2,328.1 1228.5,299.4 1258.8,268.8 1289.2,254.3 1319.5,240.3" fill="none" stroke="rgba(39,131,222,0.88)" stroke-width="1.4" stroke-linejoin="round"/>
+    <polyline points="591.5,502.2 621.8,491.1 652.2,476.2 682.5,466.7 712.8,455.3 743.2,436.9 773.5,419.8 803.8,407.1 834.2,398.0 864.5,393.3 894.8,385.3 925.2,383.0 955.5,385.2 985.8,385.9 1016.2,384.4 1046.5,379.2 1076.8,370.6 1107.2,363.4 1137.5,355.9 1167.8,346.2 1198.2,337.2 1228.5,330.0 1258.8,324.0 1289.2,319.9 1319.5,311.1" fill="none" stroke="rgba(124,184,245,0.62)" stroke-width="1.1" stroke-linejoin="round"/>
+    <line x1="0" y1="525.5" x2="1365" y2="525.5" stroke="rgba(70,161,113,0.52)" stroke-width="0.9" stroke-dasharray="4,6"/>
+    <text x="8" y="520.5" fill="rgba(70,161,113,0.82)" font-size="9" font-family="monospace" font-weight="600">SUPPORT  24,253.86</text>
+    <line x1="0" y1="99.3" x2="1365" y2="99.3" stroke="rgba(224,82,82,0.52)" stroke-width="0.9" stroke-dasharray="4,6"/>
+    <text x="8" y="94.3" fill="rgba(224,82,82,0.82)" font-size="9" font-family="monospace" font-weight="600">RESISTANCE  24,827.51</text>
+    <line x1="0" y1="188.4" x2="1365" y2="188.4" stroke="rgba(70,161,113,0.6)" stroke-width="1" stroke-dasharray="3,5" class="cprice-line"/>
+    <rect x="1365" y="179.4" width="74" height="17" fill="#46A171" rx="2"/>
+    <text x="1402" y="191.9" fill="white" font-size="10" font-family="monospace" font-weight="700" text-anchor="middle" id="svg-price">24,707.62</text>
+    <text x="8" y="26" fill="rgba(237,240,250,0.72)" font-size="13" font-family="Inter,sans-serif" font-weight="700">NIFTY 50</text>
+    <text x="92" y="26" fill="rgba(70,161,113,0.88)" font-size="11" font-family="monospace" font-weight="600">24,707.62  +1.82%</text>
+    <text x="8" y="39" fill="rgba(237,240,250,0.18)" font-size="8.5" font-family="Inter,sans-serif">SIMULATED · NOT REAL DATA</text>
+    <rect x="8" y="5" width="16" height="1.8" fill="rgba(39,131,222,0.88)"/>
+    <text x="28" y="9" fill="rgba(39,131,222,0.85)" font-size="8.5" font-family="Inter,sans-serif">MA10</text>
+    <rect x="64" y="5" width="16" height="1.8" fill="rgba(124,184,245,0.65)"/>
+    <text x="84" y="9" fill="rgba(124,184,245,0.72)" font-size="8.5" font-family="Inter,sans-serif">MA20</text>
+  </svg>
+
+  <!-- Overlays for readability -->
+  <div class="hero-mask"></div>
+  <div class="hero-mask2"></div>
+
+  <!-- Floating market chips -->
+  <div class="f-tickers" id="ftickers" aria-hidden="true"></div>
+
+
+  <div class="depth-scene" aria-hidden="true">
+    <div class="depth-orb orb-a"></div>
+    <div class="depth-orb orb-b"></div>
+    <div class="depth-orb orb-c"></div>
+  </div>
+  <div class="hero-scroll" aria-hidden="true"><span>Scroll to explore</span><i></i></div>
+
+  <!-- Hero content -->
+  <div class="h-inner">
+    <div class="live-bar" id="livebar">
+      <div class="live-dot"></div>
+      <span class="live-lbl">NIFTY 50</span>
+      <span class="live-price" id="liveprice">24,707.62</span>
+      <span class="live-chg" id="livechg">▲ +1.82%</span>
+    </div>
+    <div class="h-badge">📊 Stock Market Analyst</div>
+    <h1 class="h-title">
+      <span class="h-line"><span class="h-word">Hi, I&#39;m</span></span>
+      <span class="h-line"><span class="h-word h-grad">Vinay</span>&nbsp;<span class="h-word h-grad">Disodia</span></span>
+    </h1>
+    <p class="h-sub">Simplifying markets for everyone — identifying the best buy zones and swing trade setups you can actually act on.</p>
+    <div class="h-btns">
+      <a href="https://www.threads.com/@vinaydisodia" target="_blank" rel="noopener" class="btn-p">Follow on Threads <span>↗</span></a>
+      <a href="#projects" class="btn-g">View Analysis <span>↓</span></a>
+    </div>
+    <p class="h-disc">⚠ NOT SEBI REGISTERED · Educational purposes only · Do your own due diligence</p>
+  </div>
+</section>
+
+<!-- TICKER BAND -->
+<div class="ticker">
+  <div class="tick-track">
+    <span class="tick-item">📈 Best Buy Zones <span class="tick-dot">✦</span></span>
+    <span class="tick-item">📉 Swing Trade Setups <span class="tick-dot">✦</span></span>
+    <span class="tick-item">🔍 Technical Analysis <span class="tick-dot">✦</span></span>
+    <span class="tick-item">📊 Market Simplification <span class="tick-dot">✦</span></span>
+    <span class="tick-item">🎯 Support &amp; Resistance <span class="tick-dot">✦</span></span>
+    <span class="tick-item">⚡ Momentum Plays <span class="tick-dot">✦</span></span>
+    <span class="tick-item">📈 Best Buy Zones <span class="tick-dot">✦</span></span>
+    <span class="tick-item">📉 Swing Trade Setups <span class="tick-dot">✦</span></span>
+    <span class="tick-item">🔍 Technical Analysis <span class="tick-dot">✦</span></span>
+    <span class="tick-item">📊 Market Simplification <span class="tick-dot">✦</span></span>
+    <span class="tick-item">🎯 Support &amp; Resistance <span class="tick-dot">✦</span></span>
+    <span class="tick-item">⚡ Momentum Plays <span class="tick-dot">✦</span></span>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="ctr">
+    <div class="ab-grid">
+      <div class="ab-text rv">
+        <p class="s-lbl">About Me</p>
+        <h2 class="s-ttl">Markets made<br/>simple.</h2>
+        <p>I&#39;m a stock market enthusiast passionate about breaking down complex market movements into clear, actionable insights. My focus is technical analysis — spotting high-probability buy zones and swing trade setups before they play out.</p>
+        <p>Whether you&#39;re a beginner learning to read charts or a trader looking for fresh ideas, I share my analysis openly to help you make better decisions.</p>
+        <div class="stats">
+          <div><div class="st-n" data-val="500">0</div><div class="st-l">+ Setups Shared</div></div>
+          <div><div class="st-n" data-val="100">0</div><div class="st-l">% Free Content</div></div>
+          <div><div class="st-n" data-val="3">0</div><div class="st-l">+ Years Active</div></div>
+        </div>
+      </div>
+      <div class="rv">
+        <div class="ab-card" id="tilt">
+          <svg class="chart-svg" viewBox="0 0 300 100" preserveAspectRatio="none" height="110">
+            <defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2783DE" stop-opacity=".28"/><stop offset="100%" stop-color="#2783DE" stop-opacity="0"/></linearGradient></defs>
+            <path d="M0,85 C20,75 35,78 55,58 S85,52 105,38 S135,42 155,28 S185,32 205,18 S240,22 265,10 L300,6" fill="none" stroke="#2783DE" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M0,85 C20,75 35,78 55,58 S85,52 105,38 S135,42 155,28 S185,32 205,18 S240,22 265,10 L300,6 L300,100 L0,100Z" fill="url(#cg)"/>
+            <circle cx="205" cy="18" r="4.5" fill="#46A171"/>
+            <circle cx="105" cy="38" r="3.5" fill="#2783DE"/>
+            <circle cx="265" cy="10" r="3.5" fill="#7CB8F5"/>
+          </svg>
+          <div class="c-tags">
+            <span class="ctag">Breakout</span><span class="ctag">Buy Zone</span>
+            <span class="ctag">Swing</span><span class="ctag">Support</span><span class="ctag">Momentum</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="ctr">
+    <div class="rv">
+      <p class="s-lbl">What I Do</p>
+      <h2 class="s-ttl">How I help you<br/>navigate markets.</h2>
+      <p class="s-sub">Free, research-backed insights shared consistently so you can trade with conviction, not guesswork.</p>
+    </div>
+    <div class="sv-grid">
+      <div class="sv-card rv"><div class="sv-n">01</div><span class="sv-ico">🎯</span><h3>Best Buy Zones</h3><p>Key demand zones and support levels where risk-to-reward is most favorable — reducing guesswork from your entries.</p></div>
+      <div class="sv-card rv"><div class="sv-n">02</div><span class="sv-ico">📉</span><h3>Swing Trade Setups</h3><p>Short to medium-term trade ideas based on patterns, momentum, and volume — with clear entry, target, and stop-loss levels.</p></div>
+      <div class="sv-card rv"><div class="sv-n">03</div><span class="sv-ico">🧠</span><h3>Market Education</h3><p>Breaking down how markets work, how to read charts, and how to build a repeatable process — in plain language anyone can follow.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="ctr">
+    <div class="rv">
+      <p class="s-lbl">Featured Analysis</p>
+      <h2 class="s-ttl">Recent trade ideas<br/>&amp; setups.</h2>
+      <p class="s-sub">Replace each card with your actual stock analysis — stock name, setup, and your Threads link.</p>
+    </div>
+    <div class="pj-grid">
+      <div class="pj-card pj-feat rv">
+        <div class="pj-vis">📊</div>
+        <div class="pj-body">
+          <span class="pj-tag">Featured · Swing Trade</span>
+          <h3>Analysis #1 — Replace with Stock Name</h3>
+          <p>Describe the setup here — chart pattern, key buy zone level, target, and stop-loss. Explain why the risk-to-reward is favorable.</p>
+          <a href="https://www.threads.com/@vinaydisodia" target="_blank" class="pj-lnk">View on Threads <span class="arr">→</span></a>
+        </div>
+      </div>
+      <div class="pj-card rv"><span class="pj-tag">Buy Zone</span><h3>Analysis #2 — Stock Name</h3><p>Describe the support level, entry zone, and target. Replace with your actual analysis.</p><a href="https://www.threads.com/@vinaydisodia" target="_blank" class="pj-lnk">View on Threads <span class="arr">→</span></a></div>
+      <div class="pj-card rv"><span class="pj-tag">Swing Trade</span><h3>Analysis #3 — Stock Name</h3><p>Describe the chart pattern, momentum signal, and targets. Replace with your actual analysis.</p><a href="https://www.threads.com/@vinaydisodia" target="_blank" class="pj-lnk">View on Threads <span class="arr">→</span></a></div>
+      <div class="pj-card rv"><span class="pj-tag">Market Watch</span><h3>Analysis #4 — Stock Name</h3><p>Describe the sector watch or broader market setup. Replace with your actual market commentary.</p><a href="https://www.threads.com/@vinaydisodia" target="_blank" class="pj-lnk">View on Threads <span class="arr">→</span></a></div>
+      <div class="pj-card rv"><span class="pj-tag">Buy Zone</span><h3>Analysis #5 — Stock Name</h3><p>Describe the demand zone, reward potential, and trade structure. Replace with your actual analysis.</p><a href="https://www.threads.com/@vinaydisodia" target="_blank" class="pj-lnk">View on Threads <span class="arr">→</span></a></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="ctr">
+    <div class="ct-inner rv">
+      <p class="s-lbl">Get In Touch</p>
+      <h2 class="s-ttl">Follow for daily<br/>market insights.</h2>
+      <p class="s-sub">Get buy zones, swing trade setups, and market breakdowns straight from my Threads, every day.</p>
+      <div class="s-btns"><a href="https://www.threads.com/@vinaydisodia" target="_blank" rel="noopener" class="s-btn thr">⊕ @vinaydisodia on Threads</a></div>
+      <div class="disc-box">⚠️ NOT SEBI REGISTERED. All content is for educational and informational purposes only and does not constitute financial advice. Please do your own research before investing.</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>© 2026 Vinay Disodia</span>
+  <span>Not SEBI Registered · Educational Purposes Only</span>
+</footer>
+
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+
+<script>
+(function(){
+'use strict';
+
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const qs = (s,c=document)=>c.querySelector(s);
+const qsa = (s,c=document)=>Array.from(c.querySelectorAll(s));
+
+/* ── GSAP ─────────────────────────────────────────────────────────────── */
+const hasGSAP = typeof gsap !== 'undefined';
+if(hasGSAP && typeof ScrollTrigger !== 'undefined') gsap.registerPlugin(ScrollTrigger);
+
+/* ── CUSTOM CURSOR + MAGNETIC LABEL ─────────────────────────────────── */
+const cur=qs('#cur'), curR=qs('#cur-r'), cursorLabel=qs('#cursor-label');
+let cx=innerWidth/2,cy=innerHeight/2,rx=cx,ry=cy;
+if(!reduceMotion && matchMedia('(pointer:fine)').matches){
+  addEventListener('mousemove',e=>{
+    cx=e.clientX;cy=e.clientY;
+    document.documentElement.style.setProperty('--mx',cx+'px');
+    document.documentElement.style.setProperty('--my',cy+'px');
+  },{passive:true});
+  (function cursorLoop(){
+    rx+=(cx-rx)*.18; ry+=(cy-ry)*.18;
+    cur.style.left=cx+'px';cur.style.top=cy+'px';
+    curR.style.left=rx+'px';curR.style.top=ry+'px';
+    requestAnimationFrame(cursorLoop);
+  })();
+  qsa('a,button,.sv-card,.pj-card,.ab-card,.ctag').forEach(el=>{
+    el.addEventListener('mouseenter',()=>{
+      document.body.classList.add('hov');
+      const label=el.dataset.cursor;
+      if(label){cursorLabel.textContent=label;cursorLabel.style.opacity='1';}
+    });
+    el.addEventListener('mouseleave',()=>{
+      document.body.classList.remove('hov');cursorLabel.style.opacity='0';
+    });
+  });
+}else{
+  if(cur)cur.style.display='none'; if(curR)curR.style.display='none';
+}
+
+/* ── LIVE SIMULATED MARKET TAPE ─────────────────────────────────────── */
+const SIM={price:24707.62,open:24198,tickAcc:0};
+const livePEl=qs('#liveprice'),liveChgEl=qs('#livechg');
+const fmt=n=>n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');
+let lastT=performance.now();
+function marketLoop(ts){
+  const dt=Math.min((ts-lastT)/1000,.05);lastT=ts;SIM.tickAcc+=dt*1000;
+  if(SIM.tickAcc>=90){SIM.tickAcc=0;SIM.price+=(Math.random()-.488)*SIM.price*.00105;}
+  const pct=((SIM.price-SIM.open)/SIM.open)*100,up=pct>=0;
+  if(livePEl)livePEl.textContent=fmt(SIM.price);
+  if(liveChgEl){liveChgEl.textContent=(up?' ▲ +':' ▼ ')+Math.abs(pct).toFixed(2)+'%';liveChgEl.style.color=up?'#46A171':'#E05252';}
+  requestAnimationFrame(marketLoop);
+}
+requestAnimationFrame(marketLoop);
+
+/* ── FLOATING MARKET CHIPS ──────────────────────────────────────────── */
+const STOCKS=[
+ {sym:'RELIANCE',p:2840,d:2.14},{sym:'TCS',p:4120,d:-.38},{sym:'HDFC BANK',p:1652,d:1.62},
+ {sym:'INFOSYS',p:1890,d:-.77},{sym:'BAJFINANCE',p:6820,d:3.01},{sym:'MARUTI',p:11240,d:.94},
+ {sym:'SENSEX',p:81240,d:-.31},{sym:'ITC',p:463,d:.82},{sym:'WIPRO',p:520,d:-.19},
+ {sym:'ADANIPORT',p:1340,d:1.28},{sym:'SUNPHARMA',p:1780,d:.44},{sym:'HCLTECH',p:1920,d:-.55}
+];
+const fBox=qs('#ftickers');let lastSpawn=0;
+function spawnChip(now){
+ if(now-lastSpawn<1700||!fBox)return;lastSpawn=now;
+ const s=STOCKS[(Math.random()*STOCKS.length)|0],p=s.p*(1+(Math.random()-.5)*.006),pct=s.d+(Math.random()-.5)*.25;
+ const dur=12+Math.random()*8,dx=(Math.random()-.5)*70,left=5+Math.random()*84,top=63+Math.random()*28;
+ const el=document.createElement('div');el.className='ftk';
+ el.style.cssText=`left:${left}%;top:${top}%;--dx:${dx}px;animation-duration:${dur}s;`;
+ el.innerHTML=`<span class="sym">${s.sym}</span><span>${fmt(p)}</span><span class="${pct>=0?'up':'dn'}">${pct>=0?' ▲':' ▼'} ${Math.abs(pct).toFixed(2)}%</span>`;
+ fBox.appendChild(el);setTimeout(()=>el.remove(),(dur+1)*1000);
+}
+(function chipLoop(ts){spawnChip(ts);requestAnimationFrame(chipLoop)})();
+
+/* ── 3D POINTER PARALLAX ────────────────────────────────────────────── */
+const hero=qs('#hero'),hInner=qs('.h-inner'),orbs=qsa('.depth-orb'),chart=qs('.hero-chart');
+if(!reduceMotion && matchMedia('(pointer:fine)').matches && hero){
+ hero.addEventListener('pointermove',e=>{
+   const r=hero.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
+   if(hasGSAP){
+     gsap.to(hInner,{duration:.7,x:x*22,y:y*16,rotationY:x*3,rotationX:-y*2,ease:'power3.out',overwrite:true});
+     gsap.to(chart,{duration:1.2,x:x*-18,y:y*-12,scale:1.07,ease:'power2.out',overwrite:true});
+     orbs.forEach((o,i)=>gsap.to(o,{duration:1.2,x:x*(i+1)*28,y:y*(i+1)*22,rotation:i*20+x*25,ease:'power2.out',overwrite:true}));
+   }
+ });
+ hero.addEventListener('pointerleave',()=>{
+   if(hasGSAP){
+    gsap.to(hInner,{duration:1,x:0,y:0,rotationY:0,rotationX:0,ease:'elastic.out(1,.65)'});
+    gsap.to(chart,{duration:1.2,x:0,y:0,scale:1.06,ease:'power3.out'});
+    orbs.forEach(o=>gsap.to(o,{duration:1,x:0,y:0,rotation:0,ease:'power3.out'}));
+   }
+ });
+}
+
+/* ── CARD 3D TILT ───────────────────────────────────────────────────── */
+function tiltCard(card,intensity=10){
+ if(reduceMotion||!matchMedia('(pointer:fine)').matches)return;
+ card.addEventListener('pointermove',e=>{
+   const r=card.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
+   card.style.setProperty('--mx',((x+.5)*100)+'%');card.style.setProperty('--my',((y+.5)*100)+'%');
+   if(hasGSAP)gsap.to(card,{duration:.35,rotateY:x*intensity,rotateX:-y*intensity*.72,y:-3,z:10,transformPerspective:900,ease:'power2.out',overwrite:true});
+ });
+ card.addEventListener('pointerleave',()=>{
+   if(hasGSAP)gsap.to(card,{duration:.8,rotateY:0,rotateX:0,y:0,z:0,ease:'elastic.out(1,.6)',overwrite:true});
+ });
+}
+qsa('.sv-card').forEach(c=>tiltCard(c,7));
+qsa('.pj-card').forEach(c=>tiltCard(c,5));
+const tilt=qs('#tilt');if(tilt)tiltCard(tilt,13);
+
+/* ── MAGNETIC BUTTONS ──────────────────────────────────────────────── */
+if(!reduceMotion && matchMedia('(pointer:fine)').matches){
+ qsa('.btn-p,.btn-g,.n-cta,.s-btn').forEach(btn=>{
+  btn.addEventListener('pointermove',e=>{
+   const r=btn.getBoundingClientRect(),x=e.clientX-r.left-r.width/2,y=e.clientY-r.top-r.height/2;
+   if(hasGSAP)gsap.to(btn,{duration:.35,x:x*.18,y:y*.22,ease:'power3.out',overwrite:true});
+  });
+  btn.addEventListener('pointerleave',()=>hasGSAP&&gsap.to(btn,{duration:.5,x:0,y:0,ease:'elastic.out(1,.6)'}));
+ });
+}
+
+/* ── PRELOADER ──────────────────────────────────────────────────────── */
+const pre=qs('#pre'),pw=qs('#pw'),pb=qs('#pb'),pp=qs('#pp'),nav=qs('#nav');
+function revealHero(){
+ if(hasGSAP&&!reduceMotion){
+   const tl=gsap.timeline();
+   tl.to(pre,{autoAlpha:0,duration:.65,ease:'power2.inOut',onComplete:()=>pre.style.display='none'})
+     .to(nav,{autoAlpha:1,y:0,duration:.65,ease:'power3.out'},'-=.3')
+     .to('#livebar',{autoAlpha:1,y:0,duration:.65,ease:'power3.out'},'-=.25')
+     .to('.h-badge',{autoAlpha:1,y:0,duration:.65,ease:'power3.out'},'-=.45')
+     .to('.h-word',{y:0,duration:.95,stagger:.1,ease:'power4.out'},'-=.25')
+     .to('.h-sub',{autoAlpha:1,y:0,duration:.65,ease:'power3.out'},'-=.45')
+     .to('.h-btns',{autoAlpha:1,y:0,duration:.65,ease:'power3.out'},'-=.4')
+     .from('.depth-orb',{scale:0,autoAlpha:0,duration:1.2,stagger:.14,ease:'back.out(1.5)'},'-=.8')
+     .from('.hero-scroll',{autoAlpha:0,y:12,duration:.6},'-=.45');
+ }else{
+   pre.style.display='none';nav.style.opacity='1';nav.style.transform='none';
+   qsa('#livebar,.h-badge,.h-sub,.h-btns').forEach(e=>{e.style.opacity='1';e.style.transform='none'});
+   qsa('.h-word').forEach(e=>e.style.transform='none');
+ }
+}
+if(hasGSAP&&!reduceMotion){
+ gsap.set([nav,'#livebar','.h-badge','.h-sub','.h-btns','.hero-scroll'],{autoAlpha:0});
+ gsap.set(nav,{y:-18});gsap.set(['#livebar','.h-badge','.h-sub','.h-btns'],{y:18});gsap.set('.h-word',{y:'110%'});
+ gsap.fromTo(pw,{y:'110%'},{y:0,duration:.8,ease:'power4.out'});
+ let pct={v:0};
+ gsap.to(pct,{v:100,duration:1.25,ease:'power2.inOut',onUpdate:()=>{
+   const v=Math.round(pct.v);pp.textContent=v+'%';pb.style.width=v+'%';
+ },onComplete:revealHero});
+}else{setTimeout(revealHero,350);}
+
+/* ── SCROLL REVEALS / PARALLAX ──────────────────────────────────────── */
+qsa('section').forEach(section=>{
+ if(hasGSAP&&typeof ScrollTrigger!=='undefined'&&!reduceMotion){
+   ScrollTrigger.create({trigger:section,start:'top 78%',onEnter:()=>section.classList.add('in-view')});
+ }
+});
+if(hasGSAP&&typeof ScrollTrigger!=='undefined'&&!reduceMotion){
+ qsa('.rv').forEach((el,i)=>{
+   gsap.set(el,{autoAlpha:0,y:50});
+   gsap.to(el,{autoAlpha:1,y:0,duration:.9,delay:(i%4)*.06,ease:'power4.out',
+     scrollTrigger:{trigger:el,start:'top 86%',once:true}});
+ });
+ qsa('.sv-card').forEach((el,i)=>gsap.fromTo(el,{y:40,autoAlpha:0},{y:0,autoAlpha:1,duration:.8,delay:i*.1,ease:'power3.out',
+   scrollTrigger:{trigger:el.parentElement,start:'top 78%',once:true}}));
+ qsa('.pj-card').forEach((el,i)=>gsap.fromTo(el,{y:45,autoAlpha:0},{y:0,autoAlpha:1,duration:.85,delay:i*.08,ease:'power3.out',
+   scrollTrigger:{trigger:el.parentElement,start:'top 80%',once:true}}));
+ gsap.to('.hero-chart',{y:'12%',ease:'none',scrollTrigger:{trigger:'#hero',start:'top top',end:'bottom top',scrub:1}});
+ gsap.to('.depth-orb',{y:'-18%',ease:'none',scrollTrigger:{trigger:'#hero',start:'top top',end:'bottom top',scrub:1}});
+}
+
+/* ── COUNTERS ───────────────────────────────────────────────────────── */
+qsa('.st-n[data-val]').forEach(el=>{
+ const end=parseInt(el.dataset.val,10);
+ if(hasGSAP&&!reduceMotion){
+   const obj={v:0};
+   gsap.to(obj,{v:end,duration:1.6,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 82%',once:true},
+     onUpdate:()=>el.textContent=Math.round(obj.v)});
+ }else el.textContent=end;
+});
+
+/* ── NAV SCROLL STATE ───────────────────────────────────────────────── */
+const setNav=()=>nav&&nav.classList.toggle('scrolled',scrollY>50);
+addEventListener('scroll',setNav,{passive:true});setNav();
+
+/* ── ACTIVE NAV LINK ────────────────────────────────────────────────── */
+if(hasGSAP&&typeof ScrollTrigger!=='undefined'){
+ qsa('section[id]').forEach(sec=>{
+   const link=qs(`.n-links a[href="#${sec.id}"]`);
+   if(!link)return;
+   ScrollTrigger.create({trigger:sec,start:'top 45%',end:'bottom 45%',
+     onToggle:self=>{
+       if(self.isActive){qsa('.n-links a').forEach(a=>a.classList.remove('active'));link.classList.add('active');}
+     }});
+ });
+}
+
+/* ── SMOOTH ANCHOR + MOBILE MENU ────────────────────────────────────── */
+qsa('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{
+ const id=a.getAttribute('href');if(id==='#')return;
+ const target=qs(id);if(!target)return;
+ e.preventDefault();
+ target.scrollIntoView({behavior:reduceMotion?'auto':'smooth',block:'start'});
+}));
+
+/* ── TEXT HOVER MICRO-INTERACTION ───────────────────────────────────── */
+qsa('.pj-lnk').forEach(a=>{
+ const arr=qs('.arr',a);
+ a.addEventListener('mouseenter',()=>{if(hasGSAP)gsap.to(arr,{x:6,duration:.25,ease:'power2.out'})});
+ a.addEventListener('mouseleave',()=>{if(hasGSAP)gsap.to(arr,{x:0,duration:.35,ease:'elastic.out(1,.7)'})});
+});
+
+/* ── LIVE PRICE PULSE ───────────────────────────────────────────────── */
+if(hasGSAP&&!reduceMotion){
+ gsap.to('.live-dot',{scale:1.45,opacity:.55,duration:.95,repeat:-1,yoyo:true,ease:'sine.inOut'});
+ gsap.to('.cprice-line',{opacity:.35,duration:1.2,repeat:-1,yoyo:true,ease:'sine.inOut'});
+ gsap.to('.ticker .tick-track',{xPercent:-50,duration:28,repeat:-1,ease:'none'});
+}else{
+ /* original CSS animation remains the fallback */
+}
+
+/* ── EASTER EGG: keyboard G toggles grid atmosphere ─────────────────── */
+let gridMode=false;
+addEventListener('keydown',e=>{
+ if(e.key.toLowerCase()!=='g'||/input|textarea/i.test(e.target.tagName))return;
+ gridMode=!gridMode;document.body.classList.toggle('grid-mode',gridMode);
+ if(hasGSAP)gsap.to('.hero-chart',{opacity:gridMode?.98:.9,duration:.5});
+});
+
+})();
+</script>
+</body>
+</html>
