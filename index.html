@@ -12,10 +12,11 @@
 <meta property="og:description" content="Explore Vinay Disodia’s market setup style, historical Threads examples and interactive market lab."/>
 <meta name="twitter:card" content="summary_large_image"/>
 <title>Vinay Disodia — Stocks Research · Setups · Market Lab</title>
-<link rel="icon" type="image/png" href="assets/vd-monogram.png"/>
+<link rel="icon" type="image/png" href="https://vinaydisodia.netlify.app/assets/vd-monogram.png"/>
 <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","lenis":"https://cdn.jsdelivr.net/npm/lenis@1.3.19/dist/lenis.mjs"}}</script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -607,8 +608,69 @@ body.grid-mode #hero::before{background:
 }
 
 </style>
+<style>
+#vdThree{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;opacity:.62}.orbit-scene{isolation:isolate}.orbit-ring{z-index:2}.orbit-core{box-shadow:0 0 90px rgba(80,151,255,.18),inset 0 0 55px rgba(255,255,255,.08)}
+.ai-research-strip{position:relative;z-index:2;max-width:1180px;margin:0 auto;padding:96px 24px 130px;display:grid;grid-template-columns:.7fr 1.3fr;gap:8vw}.ai-research-strip h2{font-size:clamp(48px,7vw,108px);line-height:.88;letter-spacing:-.065em;margin:0}.ai-research-strip h2 span{color:#b8ff4d}.ai-copy{padding-top:12px}.ai-copy>p{max-width:48ch;color:#858b87;line-height:1.7;font-size:16px;margin:0 0 46px}.ai-lenses{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(255,255,255,.08)}.ai-lens{background:#0a0c12;padding:28px;min-height:190px}.ai-lens small{font:600 9px/1 Inter,sans-serif;letter-spacing:.16em;color:#5097ff}.ai-lens h3{font-size:20px;margin:36px 0 10px}.ai-lens p{color:#737a77;font-size:13px;line-height:1.6;margin:0}
+@media(max-width:760px){.ai-research-strip{grid-template-columns:1fr;padding-block:74px}.ai-lenses{grid-template-columns:1fr}.ai-lens{min-height:160px}}
+@media(prefers-reduced-motion:reduce){#vdThree{display:none}}
+
+/* DIWALI LIGHT INTERLUDE */
+.diwali-section{position:relative;min-height:760px;display:grid;place-items:center;overflow:hidden;background:#080a09;color:#f3f5ef;isolation:isolate}
+.diwali-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:1;opacity:1}
+.diwali-section:before{content:"";position:absolute;inset:0;z-index:2;background:radial-gradient(circle at 50% 60%,rgba(184,255,77,.06),transparent 32%),linear-gradient(180deg,rgba(8,10,9,.03),rgba(8,10,9,.28) 92%);pointer-events:none}
+.diwali-inner{position:relative;z-index:3;width:min(1120px,calc(100% - 44px));padding:120px 0 92px;text-align:center}
+.firecracker-layer{display:none}
+.diwali-date{font:750 .62rem/1.4 monospace;letter-spacing:.2em;color:#b8ff4d;margin-bottom:34px}
+.diwali-title{margin:0;font-size:clamp(4.2rem,12vw,10.8rem);line-height:.76;letter-spacing:-.085em;font-weight:950}
+.diwali-title span{display:block;color:transparent;-webkit-text-stroke:1px rgba(243,245,239,.5)}
+.diwali-message{max-width:550px;margin:38px auto 0;color:#a5aba1;font-size:clamp(.9rem,1.3vw,1.08rem);line-height:1.8}
+.diwali-lamps{display:flex;justify-content:center;align-items:flex-end;gap:clamp(20px,5vw,68px);min-height:170px;margin:44px auto 24px}
+.diya{position:relative;width:86px;height:46px;border:1px solid rgba(184,255,77,.4);border-radius:12px 12px 44px 44px;background:linear-gradient(180deg,rgba(184,255,77,.12),rgba(184,255,77,.025));box-shadow:inset 0 1px rgba(255,255,255,.1);transform:scale(var(--diya-scale,1));transition:filter .5s,transform .5s}
+.diya:nth-child(2),.diya:nth-child(4){--diya-scale:.8}.diya:nth-child(3){--diya-scale:1.14}
+.diya:before{content:"";position:absolute;left:50%;bottom:37px;width:19px;height:52px;border-radius:60% 40% 58% 42%;background:#b8ff4d;filter:blur(.3px) drop-shadow(0 0 16px rgba(184,255,77,.7));transform:translateX(-50%) rotate(4deg) scale(.25);transform-origin:50% 100%;opacity:.16;transition:transform .7s cubic-bezier(.16,1,.3,1),opacity .5s}
+.diya:after{content:"";position:absolute;left:50%;top:8px;width:62%;height:1px;background:rgba(184,255,77,.45);transform:translateX(-50%)}
+.diya.is-lit:before{transform:translateX(-50%) rotate(4deg) scale(1);opacity:1;animation:flame 1.9s ease-in-out infinite alternate}
+.diya.is-lit{filter:drop-shadow(0 18px 36px rgba(184,255,77,.12))}
+@keyframes flame{0%{transform:translateX(-50%) rotate(-3deg) scale(.92,1.04)}100%{transform:translateX(-50%) rotate(5deg) scale(1.06,.94)}}
+.light-diyas{border:1px solid rgba(184,255,77,.55);background:#b8ff4d;color:#071007;padding:15px 20px;font:850 .68rem/1 monospace;letter-spacing:.08em;cursor:pointer;transition:transform .25s,box-shadow .25s}
+.light-diyas:hover{transform:translateY(-3px);box-shadow:0 14px 40px rgba(184,255,77,.15)}.light-diyas:active{transform:scale(.98)}
+
+/* MARKET THINKING CHALLENGE */
+.signal-challenge{position:relative;padding:clamp(90px,12vw,160px) 24px;background:#080a10;color:#f3f5ef;overflow:hidden}
+.signal-challenge-wrap{max-width:1180px;margin:auto;display:grid;grid-template-columns:.72fr 1.28fr;gap:clamp(48px,9vw,120px);align-items:start}
+.challenge-copy{position:sticky;top:120px}.challenge-copy h2{font-size:clamp(3.2rem,7vw,7.4rem);line-height:.86;letter-spacing:-.075em;margin:0}.challenge-copy h2 span{color:#b8ff4d}.challenge-copy p{max-width:34ch;margin:30px 0 0;color:#858b87;line-height:1.75}
+.challenge-board{border-top:1px solid rgba(255,255,255,.12)}
+.challenge-prompt{padding:34px 0 28px}.challenge-prompt small{font:750 .58rem/1 monospace;color:#b8ff4d;letter-spacing:.16em}.challenge-prompt h3{font-size:clamp(1.45rem,2.8vw,2.55rem);line-height:1.15;letter-spacing:-.035em;margin:18px 0 0;max-width:19ch}
+.challenge-choices{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.challenge-choice{min-height:96px;padding:18px;text-align:left;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.018);color:#dfe4dc;font-weight:750;cursor:pointer;transition:border-color .25s,background .25s,transform .25s}
+.challenge-choice:hover{border-color:rgba(184,255,77,.45);transform:translateY(-2px)}.challenge-choice:active{transform:scale(.985)}
+.challenge-choice.is-correct{background:#b8ff4d;color:#071007;border-color:#b8ff4d}.challenge-choice.is-wrong{opacity:.42}
+.challenge-result{min-height:104px;margin-top:18px;padding:22px 0;border-top:1px solid rgba(255,255,255,.1);color:#8f9690;line-height:1.7}.challenge-result strong{display:block;color:#f3f5ef;margin-bottom:7px}
+.challenge-next{display:none;border:0;background:transparent;color:#b8ff4d;padding:0;font:800 .65rem/1 monospace;letter-spacing:.1em;cursor:pointer}.challenge-next.is-visible{display:inline-block}
+@media(max-width:760px){.diwali-section{min-height:680px}.diwali-inner{padding:96px 0 70px}.diwali-lamps{gap:13px}.diya{width:57px;height:34px}.diya:before{bottom:28px;width:14px;height:39px}.signal-challenge-wrap{grid-template-columns:1fr}.challenge-copy{position:static}.challenge-choices{grid-template-columns:1fr}.challenge-choice{min-height:72px}}
+@media(prefers-reduced-motion:reduce){.diwali-canvas,.firecracker-layer{display:none}.diya.is-lit:before{animation:none}.light-diyas,.challenge-choice{transition:none}}
+
+/* SHORT ARRIVAL GREETING */
+.landing-diwali{position:fixed;inset:0;z-index:10020;display:flex;justify-content:center;align-items:flex-start;pointer-events:none;overflow:hidden;background:linear-gradient(180deg,rgba(5,7,6,.54),transparent 55%);animation:landingFade .55s ease both}
+.landing-diwali.is-leaving{animation:landingExit .65s cubic-bezier(.7,0,1,1) both}
+.hanging-diya{position:relative;width:210px;padding-top:250px;text-align:center;animation:diyaDrop 1.05s cubic-bezier(.16,1,.3,1) both}
+.hanging-diya:before{content:"";position:absolute;left:50%;top:-40px;width:1px;height:275px;background:linear-gradient(#3c4239,#b8ff4d);transform:translateX(-50%)}
+.hanging-lamp{position:absolute;left:50%;top:215px;width:102px;height:50px;border:1px solid rgba(184,255,77,.52);border-radius:12px 12px 54px 54px;background:linear-gradient(180deg,rgba(184,255,77,.18),rgba(8,10,9,.96));transform:translateX(-50%);box-shadow:0 24px 70px rgba(184,255,77,.15)}
+.hanging-lamp:before{content:"";position:absolute;left:50%;bottom:39px;width:24px;height:66px;border-radius:60% 40% 58% 42%;background:#b8ff4d;filter:drop-shadow(0 0 22px rgba(184,255,77,.85));transform:translateX(-50%);transform-origin:50% 100%;animation:hangingFlame 1.3s ease-in-out infinite alternate}
+.hanging-lamp:after{content:"";position:absolute;left:50%;top:9px;width:68%;height:1px;background:rgba(184,255,77,.5);transform:translateX(-50%)}
+.landing-greeting{margin-top:48px;color:#f3f5ef;font-size:clamp(2rem,4vw,3.6rem);font-weight:950;letter-spacing:-.055em;line-height:.9;text-shadow:0 5px 30px #050706}
+.landing-greeting span{display:block;margin-top:13px;color:#b8ff4d;font:750 .58rem/1 monospace;letter-spacing:.18em}
+@keyframes diyaDrop{0%{transform:translateY(-380px)}65%{transform:translateY(18px)}82%{transform:translateY(-9px)}100%{transform:none}}
+@keyframes hangingFlame{0%{transform:translateX(-50%) rotate(-4deg) scale(.94,1.04)}100%{transform:translateX(-50%) rotate(4deg) scale(1.06,.95)}}
+@keyframes landingFade{from{opacity:0}to{opacity:1}}@keyframes landingExit{to{opacity:0;transform:translateY(-120px);visibility:hidden}}
+@media(max-width:600px){.hanging-diya{padding-top:215px}.hanging-diya:before{height:235px}.hanging-lamp{top:180px}.landing-greeting{margin-top:42px}}
+@media(prefers-reduced-motion:reduce){.landing-diwali,.landing-diwali.is-leaving,.hanging-diya,.hanging-lamp:before{animation:none}}
+.page-fireworks{position:fixed;inset:0;width:100%;height:100%;z-index:90;pointer-events:none;opacity:.38;mix-blend-mode:screen}
+@media(prefers-reduced-motion:reduce){.page-fireworks{display:none}}
+</style>
 </head>
 <body>
+<canvas class="page-fireworks" id="pageFireworks" aria-hidden="true"></canvas>
 <a class="skip-link" href="#hero">Skip to content</a>
 <div id="cur"></div><div id="cur-r"></div><div id="cursor-label"></div>
 
@@ -617,6 +679,13 @@ body.grid-mode #hero::before{background:
   <div class="pre-word"><span id="pw">VINAY DISODIA</span></div>
   <div class="pre-bar-w"><div class="pre-bar" id="pb"></div></div>
   <div class="pre-pct" id="pp">0%</div>
+</div>
+
+<div class="landing-diwali" id="landingDiwali" role="status" aria-label="Happy Diwali greeting">
+  <div class="hanging-diya">
+    <i class="hanging-lamp" aria-hidden="true"></i>
+    <div class="landing-greeting">Happy Diwali<span>LIGHT. CLARITY. NEW BEGINNINGS.</span></div>
+  </div>
 </div>
 
 
@@ -630,7 +699,7 @@ body.grid-mode #hero::before{background:
 
 <!-- NAV -->
 <nav id="nav">
-  <a href="#hero" class="n-logo" aria-label="Vinay Disodia home"><img src="assets/vd-monogram.png" alt="VD monogram logo"/><span>VINAY DISODIA<small>STOCKS RESEARCH</small></span></a>
+  <a href="#hero" class="n-logo" aria-label="Vinay Disodia home"><img src="https://vinaydisodia.netlify.app/assets/vd-monogram.png" alt="VD monogram logo"/><span>VINAY DISODIA<small>STOCKS RESEARCH</small></span></a>
   <ul class="n-links">
     <li><a href="#about">About</a></li>
     <li><a href="#track-record">Track Record</a></li>
@@ -705,6 +774,18 @@ body.grid-mode #hero::before{background:
 
 <div class="marquee-xl" aria-hidden="true"><div class="marquee-xl-track"><span>READ THE MARKET</span><span>FIND THE SIGNAL</span><span>READ THE MARKET</span><span>FIND THE SIGNAL</span><span>READ THE MARKET</span><span>FIND THE SIGNAL</span></div></div>
 
+<section id="diwali" class="diwali-section" aria-labelledby="diwali-title">
+  <canvas class="diwali-canvas" id="diwaliCanvas" aria-hidden="true"></canvas>
+  <div class="firecracker-layer" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><b class="sky-rocket" style="--rocket-x:14%;--rocket-delay:.2s;--rocket-drift:45px"></b><b class="sky-rocket" style="--rocket-x:76%;--rocket-delay:1.7s;--rocket-drift:-38px"></b><b class="sky-rocket" style="--rocket-x:45%;--rocket-delay:3s;--rocket-drift:22px"></b></div>
+  <div class="diwali-inner">
+    <div class="diwali-date">A FESTIVAL OF LIGHT AND CLARITY</div>
+    <h2 class="diwali-title" id="diwali-title">HAPPY <span>DIWALI.</span></h2>
+    <p class="diwali-message">May the year ahead bring clear thinking, patient decisions and bright beginnings to you and your family.</p>
+    <div class="diwali-lamps" aria-hidden="true"><i class="diya"></i><i class="diya"></i><i class="diya"></i><i class="diya"></i><i class="diya"></i></div>
+    <button class="light-diyas" id="lightDiyas" type="button">LIGHT THE LAMPS</button>
+  </div>
+</section>
+
 <!-- 3D CONSTELLATION -->
 <section id="approach" class="orbit-section">
   <div class="orbit-wrap">
@@ -720,6 +801,34 @@ body.grid-mode #hero::before{background:
   </div>
 </section>
 
+<section id="signal-challenge" class="signal-challenge" aria-labelledby="challenge-title">
+  <div class="signal-challenge-wrap">
+    <div class="challenge-copy rv">
+      <h2 id="challenge-title">Read the <span>signal.</span></h2>
+      <p>A three-question market-thinking challenge. Choose the strongest lens before revealing the reasoning.</p>
+    </div>
+    <div class="challenge-board rv">
+      <div class="challenge-prompt"><small id="challengeCount">QUESTION 1 OF 3</small><h3 id="challengeQuestion">Price breaks resistance, but participation is fading. What deserves attention first?</h3></div>
+      <div class="challenge-choices" id="challengeChoices"></div>
+      <div class="challenge-result" id="challengeResult" aria-live="polite">Choose a lens to reveal the reasoning.</div>
+      <button class="challenge-next" id="challengeNext" type="button">NEXT QUESTION</button>
+    </div>
+  </div>
+</section>
+
+<!-- SCALPING STOCKS / EDUCATIONAL RADAR -->
+<section id="ai-research" class="ai-research-strip">
+  <h2 class="rv">Research at <span>machine speed.</span></h2>
+  <div class="ai-copy rv">
+    <p>AI helps Vinay compress market context, compare historical structures and challenge a thesis. The final judgment remains human.</p>
+    <div class="ai-lenses">
+      <article class="ai-lens"><small>CONTEXT</small><h3>Signal synthesis</h3><p>Price, participation and momentum are reviewed as one market picture.</p></article>
+      <article class="ai-lens"><small>MEMORY</small><h3>Pattern recall</h3><p>Historical examples add perspective without promising repetition.</p></article>
+      <article class="ai-lens"><small>CHALLENGE</small><h3>Thesis testing</h3><p>The system searches for evidence that could invalidate the idea.</p></article>
+      <article class="ai-lens"><small>CONTROL</small><h3>Human decision</h3><p>AI supports the research process. Vinay owns the final interpretation.</p></article>
+    </div>
+  </div>
+</section>
 
 <!-- SCALPING STOCKS / EDUCATIONAL RADAR -->
 <section id="scalp-radar" class="scalp-section" aria-labelledby="scalp-title">
@@ -1108,6 +1217,7 @@ if(hasGSAP&&typeof ScrollTrigger!=='undefined'&&!reduceMotion){
 
 /* ── THREADS / TRACK RECORD INTERACTIONS ─────────────────────────────── */
 (function initContentInteractions(){
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const nodes = Array.from(document.querySelectorAll('.track-node'));
   const stock = document.getElementById('detailStock');
   const ret = document.getElementById('detailReturn');
@@ -1210,5 +1320,382 @@ if(hasGSAP&&typeof ScrollTrigger!=='undefined'&&!reduceMotion){
 })();
 </script>
 
+<script type="module">
+import * as THREE from 'three';
+import Lenis from 'lenis';
+
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const lenis = new Lenis({ smoothWheel: true, lerp: .075 });
+if (!reduced && window.gsap) {
+  lenis.on('scroll', window.ScrollTrigger?.update);
+  gsap.ticker.add(time => lenis.raf(time * 1000));
+  gsap.ticker.lagSmoothing(0);
+}
+document.querySelectorAll('a[href^="#"]').forEach(link => link.addEventListener('click', event => {
+  const target = document.querySelector(link.getAttribute('href'));
+  if (!target) return;
+  event.preventDefault();
+  lenis.scrollTo(target, { offset: -72 });
+}));
+
+const host = document.querySelector('#orbitScene');
+if (host && !reduced) {
+  const canvas = document.createElement('canvas');
+  canvas.id = 'vdThree';
+  canvas.setAttribute('aria-hidden', 'true');
+  host.prepend(canvas);
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(42, 1, .1, 100);
+  camera.position.z = 8.5;
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+  const group = new THREE.Group();
+  scene.add(group);
+  const shell = new THREE.Mesh(
+    new THREE.IcosahedronGeometry(1.28, 2),
+    new THREE.MeshBasicMaterial({ color: 0x5097ff, wireframe: true, transparent: true, opacity: .075 })
+  );
+  group.add(shell);
+  const particleGeometry = new THREE.BufferGeometry();
+  const positions = new Float32Array(900);
+  for (let i = 0; i < positions.length; i += 3) {
+    const radius = 1.85 + Math.random() * 1.65;
+    const theta = Math.random() * Math.PI * 2;
+    const phi = Math.acos(2 * Math.random() - 1);
+    positions[i] = radius * Math.sin(phi) * Math.cos(theta);
+    positions[i + 1] = radius * Math.sin(phi) * Math.sin(theta);
+    positions[i + 2] = radius * Math.cos(phi);
+  }
+  particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  group.add(new THREE.Points(particleGeometry, new THREE.PointsMaterial({ color: 0x5097ff, size: .016, transparent: true, opacity: .3 })));
+  const resize = () => {
+    const box = host.getBoundingClientRect();
+    camera.aspect = box.width / Math.max(box.height, 1);
+    camera.updateProjectionMatrix();
+    renderer.setSize(box.width, box.height, false);
+  };
+  new ResizeObserver(resize).observe(host);
+  resize();
+  let targetX = 0, targetY = 0;
+  host.addEventListener('pointermove', event => {
+    const box = host.getBoundingClientRect();
+    targetX = ((event.clientX - box.left) / box.width - .5) * .45;
+    targetY = ((event.clientY - box.top) / box.height - .5) * .3;
+  });
+  const render = () => {
+    group.rotation.y += .0018;
+    group.rotation.x += (targetY - group.rotation.x) * .025;
+    group.rotation.z += (targetX - group.rotation.z) * .025;
+    renderer.render(scene, camera);
+    requestAnimationFrame(render);
+  };
+  render();
+}
+
+if (!reduced && window.gsap && window.ScrollTrigger) {
+  gsap.fromTo('.ai-lens', { y: 55, opacity: 0 }, { y: 0, opacity: 1, duration: .85, stagger: .1, ease: 'power4.out', scrollTrigger: { trigger: '.ai-lenses', start: 'top 82%', once: true } });
+  gsap.fromTo('#ai-research h2, #ai-research .ai-copy>p', { y: 45, opacity: 0 }, { y: 0, opacity: 1, duration: 1, stagger: .12, ease: 'power4.out', scrollTrigger: { trigger: '#ai-research', start: 'top 75%', once: true } });
+}
+
+/* Diwali light ritual. Motion communicates the lamps being lit in sequence. */
+const diwaliSection = document.querySelector('#diwali');
+const diwaliCanvas = document.querySelector('#diwaliCanvas');
+const diyaEls = [...document.querySelectorAll('.diya')];
+const lightButton = document.querySelector('#lightDiyas');
+let festivalActive = false;
+let festivalLit = false;
+let particles = [];
+let rockets = [];
+let smoke = [];
+let flashes = [];
+let groundEffects = [];
+let festivalFrame = 0;
+let lastRocket = 0;
+let lastChakri = 0;
+let lastAnar = 0;
+const fireworkPalettes = [['255,190,64','255,244,196'],['184,255,77','245,255,222'],['255,236,178','255,255,245']];
+
+const createFirework = (x, y, count = 34) => {
+  const palette = fireworkPalettes[Math.floor(Math.random() * fireworkPalettes.length)];
+  const shellType = ['chrysanthemum','ring','willow'][Math.floor(Math.random()*3)];
+  flashes.push({x,y,life:1,radius:4,color:palette[1]});
+  for (let i = 0; i < count; i++) {
+    const angle = (Math.PI * 2 * i) / count + (Math.random() - .5) * .18;
+    const speed = shellType === 'ring' ? 3.2 + Math.random()*.55 : shellType === 'willow' ? 1.8 + Math.random()*2.2 : 1.1 + Math.random()*4.7;
+    const stretchY = shellType === 'willow' ? .72 : 1;
+    particles.push({x,y,lastX:x,lastY:y,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed*stretchY,life:.9+Math.random()*.34,decay:shellType==='willow'?.007+Math.random()*.007:.011+Math.random()*.012,size:.8+Math.random()*1.8,color:Math.random()>.22?palette[0]:palette[1],twinkle:Math.random()*Math.PI*2,crackle:Math.random()>.76,cracked:false});
+  }
+  for(let i=0;i<7;i++) smoke.push({x:x+(Math.random()-.5)*18,y:y+(Math.random()-.5)*12,vx:(Math.random()-.5)*.2,vy:-.1-Math.random()*.2,life:.22+Math.random()*.16,size:14+Math.random()*20});
+  particles.splice(0, Math.max(0, particles.length - 620));
+};
+
+const launchRocket = rect => {
+  const startX = rect.width * (.12 + Math.random() * .76);
+  rockets.push({
+    x:startX,
+    y:rect.height + 18,
+    vx:(Math.random() - .5) * .42,
+    vy:-(8.2 + Math.random() * 2.4),
+    targetY:rect.height * (.12 + Math.random() * .24),
+    color:fireworkPalettes[Math.floor(Math.random() * fireworkPalettes.length)][1],
+    trail:[],
+    wobble:Math.random()*Math.PI*2
+  });
+};
+
+const addGroundSpark = (x,y,vx,vy,color,life=.55) => particles.push({x,y,lastX:x,lastY:y,vx,vy,life,decay:.016+Math.random()*.012,size:.7+Math.random()*1.4,color,twinkle:Math.random()*Math.PI*2,crackle:false,cracked:true});
+
+const startChakri = rect => groundEffects.push({type:'chakri',x:rect.width*(Math.random()>.5?.22:.78),y:rect.height-58,age:0,duration:210,angle:0});
+const startAnar = rect => groundEffects.push({type:'anar',x:rect.width*(Math.random()>.5?.28:.72),y:rect.height-62,age:0,duration:245});
+
+const lightFestival = () => {
+  diyaEls.forEach((diya, index) => {
+    if (reduced) diya.classList.add('is-lit');
+    else setTimeout(() => diya.classList.add('is-lit'), index * 150);
+  });
+  festivalLit = true;
+  if (lightButton) lightButton.textContent = 'LAMPS ARE LIT';
+};
+
+if (lightButton) lightButton.addEventListener('click', () => {
+  diyaEls.forEach(diya => diya.classList.remove('is-lit'));
+  lightFestival();
+});
+
+if (diwaliSection) {
+  new IntersectionObserver(entries => {
+    festivalActive = entries[0].isIntersecting;
+    if (festivalActive && !festivalLit) lightFestival();
+  }, { threshold: .34 }).observe(diwaliSection);
+}
+
+if (diwaliCanvas && !reduced) {
+  const ctx = diwaliCanvas.getContext('2d');
+  const resizeFestival = () => {
+    const rect = diwaliCanvas.getBoundingClientRect();
+    const dpr = Math.min(devicePixelRatio, 1.5);
+    diwaliCanvas.width = Math.max(1, rect.width * dpr);
+    diwaliCanvas.height = Math.max(1, rect.height * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  };
+  new ResizeObserver(resizeFestival).observe(diwaliCanvas);
+  resizeFestival();
+  const drawFestival = time => {
+    const rect = diwaliCanvas.getBoundingClientRect();
+    ctx.clearRect(0, 0, rect.width, rect.height);
+    ctx.globalCompositeOperation = 'source-over';
+    smoke = smoke.filter(cloud => cloud.life > .01);
+    smoke.forEach(cloud => {
+      cloud.x += cloud.vx; cloud.y += cloud.vy; cloud.size += .16; cloud.life *= .985;
+      const haze = ctx.createRadialGradient(cloud.x,cloud.y,0,cloud.x,cloud.y,cloud.size);
+      haze.addColorStop(0,`rgba(190,190,174,${cloud.life})`); haze.addColorStop(1,'rgba(120,120,110,0)');
+      ctx.fillStyle=haze; ctx.beginPath(); ctx.arc(cloud.x,cloud.y,cloud.size,0,Math.PI*2); ctx.fill();
+    });
+    ctx.globalCompositeOperation = 'lighter';
+    flashes = flashes.filter(flash => flash.life > .02);
+    flashes.forEach(flash => {
+      flash.radius += 3.4; flash.life *= .91;
+      const glow = ctx.createRadialGradient(flash.x,flash.y,0,flash.x,flash.y,flash.radius*2.4);
+      glow.addColorStop(0,`rgba(${flash.color},${flash.life})`);glow.addColorStop(.18,`rgba(${flash.color},${flash.life*.55})`);glow.addColorStop(1,`rgba(${flash.color},0)`);
+      ctx.fillStyle=glow;ctx.beginPath();ctx.arc(flash.x,flash.y,flash.radius*2.4,0,Math.PI*2);ctx.fill();
+      ctx.beginPath();ctx.strokeStyle=`rgba(${flash.color},${flash.life*.5})`;ctx.lineWidth=1;ctx.arc(flash.x,flash.y,flash.radius*1.35,0,Math.PI*2);ctx.stroke();
+    });
+    if (festivalActive && time - lastRocket > 1750) {
+      launchRocket(rect);
+      lastRocket = time;
+    }
+    if (festivalActive && time - lastChakri > 7200) {
+      startChakri(rect);
+      lastChakri = time;
+    }
+    if (festivalActive && time - lastAnar > 8800) {
+      startAnar(rect);
+      lastAnar = time;
+    }
+    groundEffects = groundEffects.filter(effect => {
+      effect.age++;
+      const progress=effect.age/effect.duration;
+      const fade=Math.sin(Math.min(1,progress)*Math.PI);
+      if(effect.type==='chakri'){
+        effect.angle+=.24+progress*.18;
+        const radius=8+Math.sin(progress*Math.PI)*22;
+        for(let i=0;i<3;i++){
+          const angle=effect.angle+i*(Math.PI*2/3)+(Math.random()-.5)*.16;
+          const speed=2.4+Math.random()*2.8;
+          addGroundSpark(effect.x+Math.cos(angle)*radius,effect.y+Math.sin(angle)*radius*.18,Math.cos(angle)*speed,Math.sin(angle)*speed*.2-.15,'255,196,72',.38+Math.random()*.3);
+        }
+        const floorGlow=ctx.createRadialGradient(effect.x,effect.y,0,effect.x,effect.y,70);
+        floorGlow.addColorStop(0,`rgba(255,196,72,${fade*.32})`);floorGlow.addColorStop(1,'rgba(255,196,72,0)');ctx.fillStyle=floorGlow;ctx.fillRect(effect.x-70,effect.y-30,140,60);
+        ctx.beginPath();ctx.strokeStyle=`rgba(255,238,178,${fade})`;ctx.lineWidth=2;ctx.arc(effect.x,effect.y,radius,0,Math.PI*2);ctx.stroke();
+      }else{
+        const intensity=Math.sin(progress*Math.PI);
+        const plume=.35+intensity*.95;
+        for(let i=0;i<9;i++){
+          const spread=(Math.random()-.5)*(3.8+progress*2.4);
+          addGroundSpark(effect.x+(Math.random()-.5)*13,effect.y-5,spread,-(5.2+Math.random()*8.4)*plume,Math.random()>.22?'255,196,72':'184,255,77',.65+Math.random()*.34);
+        }
+        if(effect.age%5===0)smoke.push({x:effect.x+(Math.random()-.5)*16,y:effect.y-24,vx:(Math.random()-.5)*.25,vy:-.48,life:.15,size:13+Math.random()*11});
+        const fountainGlow=ctx.createRadialGradient(effect.x,effect.y-42,0,effect.x,effect.y-42,125);
+        fountainGlow.addColorStop(0,`rgba(255,196,72,${intensity*.34})`);fountainGlow.addColorStop(1,'rgba(255,196,72,0)');
+        ctx.fillStyle=fountainGlow;ctx.fillRect(effect.x-125,effect.y-170,250,190);
+        ctx.beginPath();ctx.fillStyle=`rgba(255,238,178,${.55+intensity*.45})`;ctx.moveTo(effect.x-13,effect.y);ctx.lineTo(effect.x,effect.y-38-intensity*48);ctx.lineTo(effect.x+13,effect.y);ctx.fill();
+        ctx.beginPath();ctx.strokeStyle=`rgba(255,196,72,${intensity*.75})`;ctx.lineWidth=2;ctx.ellipse(effect.x,effect.y,28+intensity*26,7,0,0,Math.PI*2);ctx.stroke();
+      }
+      return effect.age<effect.duration;
+    });
+    rockets = rockets.filter(rocket => {
+      rocket.trail.unshift({x:rocket.x,y:rocket.y});
+      rocket.trail = rocket.trail.slice(0, 25);
+      rocket.wobble += .08;
+      rocket.vx += Math.sin(rocket.wobble)*.004;
+      rocket.x += rocket.vx;
+      rocket.y += rocket.vy;
+      rocket.vy += .016;
+      if(Math.random()>.35) smoke.push({x:rocket.x+(Math.random()-.5)*3,y:rocket.y+8,vx:(Math.random()-.5)*.12,vy:.18,life:.055,size:5+Math.random()*4});
+      for(let index=1;index<rocket.trail.length;index++){
+        const a=rocket.trail[index-1],b=rocket.trail[index],alpha=(1-index/rocket.trail.length)*.88;
+        ctx.beginPath();ctx.strokeStyle=`rgba(${rocket.color},${alpha})`;ctx.lineWidth=Math.max(.5,3.2-index*.11);ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
+      }
+      ctx.beginPath();
+      ctx.fillStyle = '#fffde8'; ctx.shadowColor=`rgb(${rocket.color})`;ctx.shadowBlur=18;
+      ctx.arc(rocket.x, rocket.y, 3.6, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur=0;
+      if (rocket.y <= rocket.targetY) {
+        createFirework(rocket.x, rocket.y, 64 + Math.floor(Math.random()*28));
+        return false;
+      }
+      return true;
+    });
+    particles = particles.filter(particle => particle.life > .015);
+    particles.forEach(particle => {
+      particle.lastX=particle.x; particle.lastY=particle.y;
+      particle.x += particle.vx;
+      particle.y += particle.vy;
+      particle.vy += .032;
+      particle.vx *= .992; particle.vy *= .996;
+      particle.life -= particle.decay; particle.twinkle += .24;
+      const shimmer=.55+Math.sin(particle.twinkle)*.35;
+      ctx.beginPath();ctx.strokeStyle=`rgba(${particle.color},${Math.max(0,particle.life)*shimmer})`;ctx.lineWidth=particle.size;ctx.moveTo(particle.lastX,particle.lastY);ctx.lineTo(particle.x,particle.y);ctx.stroke();
+      if(particle.crackle && !particle.cracked && particle.life < .42){particle.cracked=true;for(let i=0;i<3;i++)particles.push({x:particle.x,y:particle.y,lastX:particle.x,lastY:particle.y,vx:(Math.random()-.5)*1.8,vy:(Math.random()-.5)*1.8,life:.3,decay:.028,size:.65,color:'255,244,196',twinkle:0,crackle:false,cracked:true})}
+      if(Math.random()>.965) smoke.push({x:particle.x,y:particle.y,vx:0,vy:-.05,life:.025,size:3});
+    });
+    if(particles.length>700) particles.splice(0,particles.length-700);
+    if(smoke.length>110) smoke.splice(0,smoke.length-110);
+    ctx.globalCompositeOperation = 'source-over';
+    if (festivalActive || particles.length) festivalFrame = requestAnimationFrame(drawFestival);
+    else festivalFrame = 0;
+  };
+  new IntersectionObserver(entries => {
+    festivalActive = entries[0].isIntersecting;
+    if(festivalActive && !lastChakri){lastChakri=performance.now()-5000;lastAnar=performance.now()-2000}
+    if (festivalActive && !festivalFrame) festivalFrame = requestAnimationFrame(drawFestival);
+  }).observe(diwaliCanvas);
+}
+
+const landingGreeting = document.querySelector('#landingDiwali');
+if (landingGreeting) {
+  setTimeout(() => landingGreeting.classList.add('is-leaving'), 3500);
+  setTimeout(() => landingGreeting.remove(), 4250);
+}
+
+/* Interactive market-thinking challenge. */
+const challengeData = [
+  {question:'Price breaks resistance, but participation is fading. What deserves attention first?',choices:['Momentum','Risk','Timing','Structure'],answer:0,title:'Momentum needs confirmation.',detail:'A breakout without improving participation can lose strength. Compare momentum before trusting the move.'},
+  {question:'The setup is attractive, but the invalidation point is unclear. Which lens comes first?',choices:['Timing','Structure','Risk','Momentum'],answer:2,title:'Risk comes before entry.',detail:'If the thesis has no clear invalidation point, the setup is not ready for a decision.'},
+  {question:'Price reaches a major level after an extended move. What should the next decision emphasize?',choices:['Immediate entry','Patience','Prediction','Position size'],answer:1,title:'Patience protects the thesis.',detail:'A strong level is context, not an instruction. Wait for price behavior to confirm the idea.'}
+];
+const challengeQuestion = document.querySelector('#challengeQuestion');
+const challengeCount = document.querySelector('#challengeCount');
+const challengeChoices = document.querySelector('#challengeChoices');
+const challengeResult = document.querySelector('#challengeResult');
+const challengeNext = document.querySelector('#challengeNext');
+let challengeIndex = 0;
+
+const renderChallenge = () => {
+  if (!challengeChoices) return;
+  const item = challengeData[challengeIndex];
+  challengeCount.textContent = `QUESTION ${challengeIndex + 1} OF ${challengeData.length}`;
+  challengeQuestion.textContent = item.question;
+  challengeResult.textContent = 'Choose a lens to reveal the reasoning.';
+  challengeNext.classList.remove('is-visible');
+  challengeNext.textContent = challengeIndex === challengeData.length - 1 ? 'RESTART CHALLENGE' : 'NEXT QUESTION';
+  challengeChoices.innerHTML = '';
+  item.choices.forEach((choice, choiceIndex) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'challenge-choice';
+    button.textContent = choice;
+    button.addEventListener('click', () => {
+      [...challengeChoices.children].forEach((candidate, index) => {
+        candidate.disabled = true;
+        candidate.classList.add(index === item.answer ? 'is-correct' : 'is-wrong');
+      });
+      challengeResult.innerHTML = `<strong>${item.title}</strong>${item.detail}`;
+      challengeNext.classList.add('is-visible');
+    }, { once: true });
+    challengeChoices.appendChild(button);
+  });
+};
+if (challengeNext) challengeNext.addEventListener('click', () => {
+  challengeIndex = challengeIndex === challengeData.length - 1 ? 0 : challengeIndex + 1;
+  renderChallenge();
+});
+renderChallenge();
+</script>
+<script>
+(() => {
+  const canvas = document.querySelector('#pageFireworks');
+  if (!canvas || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const ctx = canvas.getContext('2d');
+  const palettes = [
+    ['184,255,77','240,255,211'],
+    ['255,196,72','255,241,193'],
+    ['92,170,255','218,235,255']
+  ];
+  let width=0,height=0,dpr=1,lastLaunch=0,nextLaunch=1400;
+  let rockets=[],sparks=[],haze=[];
+  const resize=()=>{
+    dpr=Math.min(devicePixelRatio||1,1.35);width=innerWidth;height=innerHeight;
+    canvas.width=Math.round(width*dpr);canvas.height=Math.round(height*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  };
+  const launch=()=>{
+    const palette=palettes[Math.floor(Math.random()*palettes.length)];
+    const x=width*(.1+Math.random()*.8);
+    rockets.push({x,y:height+14,vx:(Math.random()-.5)*.55,vy:-(7.4+Math.random()*2.2),target:height*(.12+Math.random()*.34),color:palette,trail:[],wobble:Math.random()*6.28});
+  };
+  const burst=(rocket)=>{
+    const count=34+Math.floor(Math.random()*22);
+    const ring=Math.random()>.62;
+    for(let i=0;i<count;i++){
+      const angle=(Math.PI*2*i/count)+(Math.random()-.5)*.12;
+      const speed=(ring?2.5:1.1+Math.random()*3.4);
+      sparks.push({x:rocket.x,y:rocket.y,px:rocket.x,py:rocket.y,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,color:rocket.color[i%2],life:.66+Math.random()*.3,decay:.008+Math.random()*.008,size:.65+Math.random()*1.1});
+    }
+    haze.push({x:rocket.x,y:rocket.y,r:6,life:.18,color:rocket.color[0]});
+  };
+  const frame=(time)=>{
+    ctx.clearRect(0,0,width,height);
+    if(document.visibilityState==='visible' && time-lastLaunch>nextLaunch){launch();lastLaunch=time;nextLaunch=2600+Math.random()*2400}
+    ctx.globalCompositeOperation='source-over';
+    haze=haze.filter(p=>p.life>.008);
+    haze.forEach(p=>{p.r+=2.5;p.life*=.93;const g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*4);g.addColorStop(0,`rgba(${p.color},${p.life})`);g.addColorStop(1,`rgba(${p.color},0)`);ctx.fillStyle=g;ctx.beginPath();ctx.arc(p.x,p.y,p.r*4,0,Math.PI*2);ctx.fill()});
+    ctx.globalCompositeOperation='lighter';
+    rockets=rockets.filter(r=>{
+      r.trail.unshift({x:r.x,y:r.y});r.trail=r.trail.slice(0,22);r.wobble+=.09;r.vx+=Math.sin(r.wobble)*.004;r.x+=r.vx;r.y+=r.vy;r.vy+=.018;
+      r.trail.forEach((p,i)=>{if(!i)return;const a=r.trail[i-1],alpha=(1-i/r.trail.length)*.52;ctx.beginPath();ctx.strokeStyle=`rgba(${r.color[0]},${alpha})`;ctx.lineWidth=Math.max(.35,2.1-i*.08);ctx.moveTo(a.x,a.y);ctx.lineTo(p.x,p.y);ctx.stroke()});
+      ctx.fillStyle='#fffde8';ctx.shadowColor=`rgb(${r.color[0]})`;ctx.shadowBlur=12;ctx.beginPath();ctx.arc(r.x,r.y,2.2,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
+      if(r.y<=r.target){burst(r);return false}return true;
+    });
+    sparks=sparks.filter(p=>p.life>.015);
+    sparks.forEach(p=>{p.px=p.x;p.py=p.y;p.x+=p.vx;p.y+=p.vy;p.vy+=.026;p.vx*=.994;p.life-=p.decay;ctx.beginPath();ctx.strokeStyle=`rgba(${p.color},${p.life*.72})`;ctx.lineWidth=p.size;ctx.moveTo(p.px,p.py);ctx.lineTo(p.x,p.y);ctx.stroke()});
+    ctx.globalCompositeOperation='source-over';requestAnimationFrame(frame);
+  };
+  addEventListener('resize',resize,{passive:true});resize();
+  setTimeout(()=>{lastLaunch=performance.now()-nextLaunch},1800);
+  requestAnimationFrame(frame);
+})();
+</script>
 </body>
 </html>
